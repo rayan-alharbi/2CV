@@ -1,178 +1,151 @@
 import { useState } from 'react';
 import { useCVStore } from '@/store/cvStore';
 import { useTranslation } from 'react-i18next';
-import { Plus, Trash2, ExternalLink } from 'lucide-react';
+import { Plus, Trash2, ExternalLink, Folder } from 'lucide-react';
+
+const empty = { name: '', description: '', link: '', tech: '' };
 
 const ProjectsForm = () => {
   const { t } = useTranslation();
   const { cvData, addProject, updateProject, removeProject, language } = useCVStore();
   const { projects } = cvData;
-  
-  const [newProject, setNewProject] = useState({
-    name: '',
-    description: '',
-    link: ''
-  });
+  const [draft, setDraft] = useState(empty);
 
-  const handleAdd = () => {
-    if (newProject.name) {
-      addProject(newProject);
-      setNewProject({
-        name: '',
-        description: '',
-        link: ''
-      });
-    }
+  const submit = () => {
+    if (!draft.name.trim()) return;
+    addProject(draft);
+    setDraft(empty);
   };
 
+  const examples = [
+    { name: 'Portfolio site', tech: 'React, Tailwind' },
+    { name: 'E-commerce platform', tech: 'Next.js, Stripe' },
+    { name: 'Realtime chat', tech: 'WebSocket, Node.js' },
+    { name: 'Task manager', tech: 'React, PostgreSQL' },
+  ];
+
   return (
-    <div className="space-y-6">
-      {/* Existing Projects */}
-      {projects.length > 0 && (
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-            {t('projects')} ({projects.length})
-          </h3>
-          {projects.map((project) => (
-            <div key={project.id} className="border border-gray-200 dark:border-gray-600 rounded-lg p-4">
-              <div className="flex justify-between items-start mb-3">
-                <div className="flex-1">
-                  <input
-                    type="text"
-                    value={project.name}
-                    onChange={(e) => updateProject(project.id, { name: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm mb-2"
-                    placeholder={t('projectName')}
-                  />
-                </div>
-                <button
-                  onClick={() => removeProject(project.id)}
-                  className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 ml-2"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
+    <div className="space-y-5">
+      {projects.map((p) => (
+        <div key={p.id} className="card p-5">
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-accent/10 text-accent-strong dark:text-white flex items-center justify-center">
+                <Folder className="w-4 h-4" />
               </div>
-              
-              <div className="mb-3">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  {t('description')}
-                </label>
-                <textarea
-                  value={project.description}
-                  onChange={(e) => updateProject(project.id, { description: e.target.value })}
-                  rows={2}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                  placeholder={language === 'ar' ? 'وصف المشروع...' : 'Project description...'}
+              <input
+                value={p.name}
+                onChange={(e) => updateProject(p.id, { name: e.target.value })}
+                className="field"
+                placeholder={t('projectName')}
+              />
+            </div>
+            <button onClick={() => removeProject(p.id)} className="text-rose-500 opacity-60 hover:opacity-100 ms-2" aria-label="remove">
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </div>
+          <div className="grid gap-3">
+            <div>
+              <label className="label">{t('description')}</label>
+              <textarea
+                value={p.description}
+                onChange={(e) => updateProject(p.id, { description: e.target.value })}
+                rows={2}
+                className="field"
+              />
+            </div>
+            <div className="grid sm:grid-cols-2 gap-3">
+              <div>
+                <label className="label">{t('projectTech')}</label>
+                <input
+                  value={p.tech}
+                  onChange={(e) => updateProject(p.id, { tech: e.target.value })}
+                  className="field"
+                  placeholder="React, TypeScript, Tailwind"
                 />
               </div>
-              
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  {t('projectLink')} (اختياري)
-                </label>
-                <div className="flex">
+                <label className="label">{t('projectLink')}</label>
+                <div className="flex gap-2">
                   <input
-                    type="url"
-                    value={project.link}
-                    onChange={(e) => updateProject(project.id, { link: e.target.value })}
-                    className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-l-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                    placeholder="https://..."
+                    value={p.link}
+                    onChange={(e) => updateProject(p.id, { link: e.target.value })}
+                    className="field"
+                    placeholder="https://…"
+                    dir="ltr"
                   />
-                  {project.link && (
-                    <a
-                      href={project.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-3 py-2 bg-blue-600 text-white rounded-r-lg hover:bg-blue-700 transition-colors"
-                    >
+                  {p.link && (
+                    <a href={p.link} target="_blank" rel="noopener noreferrer" className="btn-soft !px-3">
                       <ExternalLink className="w-4 h-4" />
                     </a>
                   )}
                 </div>
               </div>
             </div>
-          ))}
+          </div>
         </div>
-      )}
+      ))}
 
-      {/* Add New Project */}
-      <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4">
-        <h4 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-          <Plus className="w-4 h-4 ml-2" />
-          {t('add')} {t('projects')}
+      <div className="card border-dashed p-5">
+        <h4 className="flex items-center gap-2 font-semibold text-slate-900 dark:text-white mb-4">
+          <Plus className="w-4 h-4" /> {t('addProject')}
         </h4>
-        
-        <div className="space-y-4 mb-4">
+        <div className="grid gap-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              {t('projectName')} *
-            </label>
+            <label className="label">{t('projectName')} *</label>
             <input
-              type="text"
-              value={newProject.name}
-              onChange={(e) => setNewProject({ ...newProject, name: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-              placeholder={language === 'ar' ? 'مثال: تطبيق إدارة المهام' : 'e.g. Task Management App'}
+              value={draft.name}
+              onChange={(e) => setDraft({ ...draft, name: e.target.value })}
+              className="field"
+              placeholder={language === 'ar' ? 'تطبيق إدارة المهام' : 'Task Manager'}
             />
           </div>
-          
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              {t('description')}
-            </label>
+            <label className="label">{t('description')}</label>
             <textarea
-              value={newProject.description}
-              onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-              placeholder={language === 'ar' ? 'وصف المشروع والتقنيات المستخدمة...' : 'Project description and technologies used...'}
+              value={draft.description}
+              onChange={(e) => setDraft({ ...draft, description: e.target.value })}
+              rows={2}
+              className="field"
             />
           </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              {t('projectLink')} (اختياري)
-            </label>
-            <input
-              type="url"
-              value={newProject.link}
-              onChange={(e) => setNewProject({ ...newProject, link: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-              placeholder="https://github.com/username/project"
-            />
+          <div className="grid sm:grid-cols-2 gap-3">
+            <div>
+              <label className="label">{t('projectTech')}</label>
+              <input
+                value={draft.tech}
+                onChange={(e) => setDraft({ ...draft, tech: e.target.value })}
+                className="field"
+                placeholder="React, Node.js"
+              />
+            </div>
+            <div>
+              <label className="label">{t('projectLink')}</label>
+              <input
+                value={draft.link}
+                onChange={(e) => setDraft({ ...draft, link: e.target.value })}
+                className="field"
+                placeholder="https://github.com/…"
+                dir="ltr"
+              />
+            </div>
           </div>
+          <button onClick={submit} disabled={!draft.name.trim()} className="btn-primary self-start text-xs">
+            <Plus className="w-3.5 h-3.5" /> {t('add')}
+          </button>
         </div>
-        
-        <button
-          onClick={handleAdd}
-          disabled={!newProject.name}
-          className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors text-sm"
-        >
-          <Plus className="w-4 h-4 ml-2" />
-          {t('add')} {t('projects')}
-        </button>
       </div>
 
-      {/* Quick Add Projects */}
-      <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-        <h4 className="font-semibold text-gray-900 dark:text-white mb-3">
-          {language === 'ar' ? 'أمثلة على المشاريع' : 'Project Examples'}
-        </h4>
+      <div className="card p-5">
+        <div className="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-3">{t('projectExamples')}</div>
         <div className="flex flex-wrap gap-2">
-          {[
-            { name: 'Portfolio Website', description: 'Personal portfolio website built with React and Tailwind CSS' },
-            { name: 'E-commerce App', description: 'Full-stack e-commerce application with payment integration' },
-            { name: 'Task Manager', description: 'Task management application with team collaboration features' },
-            { name: 'Weather App', description: 'Weather forecasting application with location services' },
-            { name: 'Blog Platform', description: 'Content management system for blogging' },
-            { name: 'Chat Application', description: 'Real-time messaging application with WebSocket' }
-          ].map((project) => (
+          {examples.map((p) => (
             <button
-              key={project.name}
-              onClick={() => setNewProject({ name: project.name, description: project.description, link: '' })}
-              className="px-3 py-1 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm hover:bg-blue-100 dark:hover:bg-blue-900 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+              key={p.name}
+              onClick={() => setDraft({ ...empty, name: p.name, tech: p.tech })}
+              className="chip hover:bg-accent/10 hover:text-accent-strong dark:hover:text-white transition"
             >
-              {project.name}
+              + {p.name}
             </button>
           ))}
         </div>

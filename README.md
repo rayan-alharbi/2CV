@@ -1,48 +1,67 @@
-# CV Creator - Professional Resume Builder
+# CVForge — Beautiful Resumes, Instant Export
 
-منشئ السيرة الذاتية الاحترافية - Professional CV/Resume Builder
+منصّة عربية احترافية لصنع سيرة ذاتية أنيقة بمعاينة مباشرة وتصدير PDF بجودة الطباعة.
+
+🔗 **GitHub:** [https://github.com/rayan-alharbi/cv-Create](https://github.com/rayan-alharbi/cv-Create)
+🌐 **Live demo:** [https://cv-create.pages.dev/](https://cv-create.pages.dev/)
+
+---
 
 ## 🌟 المميزات / Features
 
 ### العربية
-- ✅ واجهة مستخدم عربية كاملة مع دعم اللغة الإنجليزية
-- ✅ معاينة مباشرة أثناء الكتابة
-- ✅ تصاميم متعددة (بسيط، إبداعي، كلاسيكي، حديث)
-- ✅ دعم RTL (الكتابة من اليمين لليسار)
-- ✅ تصدير PDF عالي الجودة
-- ✅ تخزين البيانات محلياً
-- ✅ سهل الاستخدام وبدون تعقيدات
+
+- ✅ ست قوالب فاخرة: **Modern · Minimal · Creative · Classic · Elegant · Executive**
+- ✅ ثمانية ألوان تمييز قابلة للتخصيص (Blue · Purple · Emerald · Rose · Amber · Slate · Cyan · Indigo)
+- ✅ معاينة مباشرة (Live Preview) أثناء الكتابة + معاينة لزجة على سطح المكتب وتابات Edit/Preview على الموبايل
+- ✅ رفع صورة شخصية + روابط سوشيال (LinkedIn · GitHub · Website · X)
+- ✅ أشرطة تقدّم بصرية لمستوى المهارات واللغات
+- ✅ حفظ تلقائي مع مؤشّر "Auto-saved · Xs"
+- ✅ زر **بيانات تجريبية** لتجربة الواجهة فورًا
+- ✅ تصدير PDF بحجم **A4 الدقيق** مع دعم متعدّد الصفحات وحلّ كامل لتشكيل الحروف العربية
+- ✅ طباعة احترافية (`@page A4`) تخفي كل ما عدا السيرة
+- ✅ دعم RTL/LTR، عربي وإنجليزي
+- ✅ وضع داكن/فاتح
+- ✅ تخزين محلي (Zustand persist)
 
 ### English
-- ✅ Full Arabic interface with English language support
-- ✅ Live preview while writing
-- ✅ Multiple templates (Minimal, Creative, Classic, Modern)
-- ✅ RTL (Right-to-Left) support
-- ✅ High-quality PDF export
-- ✅ Local data storage
-- ✅ Easy to use without complications
 
-## 🌐 Live Demo / معاينة مباشرة
+- ✅ Six hand-crafted templates: **Modern · Minimal · Creative · Classic · Elegant · Executive**
+- ✅ Eight customizable accent colors
+- ✅ Real-time live preview, sticky on desktop, with Edit/Preview tabs on mobile
+- ✅ Photo upload + social links (LinkedIn · GitHub · Website · X)
+- ✅ Visual progress bars for skill and language levels
+- ✅ Auto-save with "Auto-saved · Xs" indicator
+- ✅ One-click **sample data** to try the editor instantly
+- ✅ Pixel-perfect **A4 PDF export**, multi-page aware, with bulletproof Arabic shaping
+- ✅ Print-ready (`@page A4`) with all UI chrome hidden
+- ✅ RTL/LTR ready (Arabic + English)
+- ✅ Dark / light theme
+- ✅ Local persistence (Zustand persist middleware)
 
-[https://cv-create.pages.dev/](https://cv-create.pages.dev/)
+---
 
 ## 🚀 التقنيات المستخدمة / Tech Stack
 
-- **Frontend**: React 18 + TypeScript
-- **Styling**: Tailwind CSS
-- **State Management**: Zustand
-- **Internationalization**: i18next
-- **PDF Export**: html2pdf.js
-- **Build Tool**: Vite
-- **Animation**: Framer Motion
-- **Icons**: Lucide React
+- **Framework:** React 18 + TypeScript + Vite 6
+- **Styling:** Tailwind CSS 3 + custom CSS variables for accent colors
+- **State:** Zustand (with `persist` + versioned migration)
+- **i18n:** i18next + react-i18next
+- **PDF export:** `html2canvas` + `jsPDF` (multi-page A4 slicing)
+- **Animation:** Framer Motion
+- **Icons:** Lucide React
+- **Routing:** React Router v7
+
+---
 
 ## 📋 المتطلبات / Requirements
 
-- Node.js 16+ 
-- npm أو pnpm
+- Node.js 18+
+- npm or pnpm
 
-## 🛠️ التثبيت والتشغيل المحلي / Installation & Local Development
+---
+
+## 🛠️ التثبيت والتشغيل / Installation & Local Development
 
 ```bash
 # Clone the repository
@@ -56,84 +75,126 @@ pnpm install
 
 # Run development server
 npm run dev
-# or
-pnpm dev
+
+# Type-check
+npm run check
+
+# Production build
+npm run build
+
+# Preview production build
+npm run preview
 ```
 
-## 🌐 النشر على Cloudflare Pages / Deploy to Cloudflare Pages
+---
 
-تم إعداد المشروع للنشر السهل على Cloudflare Pages. انظر إلى ملف [DEPLOYMENT.md](DEPLOYMENT.md) للحصول على دليل النشر الكامل.
+## 🌐 النشر / Deployment
 
-The project is set up for easy deployment on Cloudflare Pages. See [DEPLOYMENT.md](DEPLOYMENT.md) for the complete deployment guide.
+المشروع مُهيّأ للنشر على **Cloudflare Pages** و **Vercel**:
+
+- `wrangler.toml` و `_redirects` للـCloudflare Pages
+- `vercel.json` للنشر على Vercel
+- راجع [DEPLOYMENT.md](DEPLOYMENT.md) للدليل الكامل
+
+The project is pre-configured for **Cloudflare Pages** and **Vercel** deployment. See [DEPLOYMENT.md](DEPLOYMENT.md).
+
+---
 
 ## 📁 هيكل المشروع / Project Structure
 
 ```
 cv-Create/
 ├── src/
-│   ├── components/          # React components
-│   │   ├── CVPreview.tsx   # CV preview component
-│   │   ├── Header.tsx      # Navigation header
-│   │   └── forms/          # Form components
-│   ├── pages/              # Page components
-│   │   ├── Home.tsx        # Homepage
-│   │   ├── CreateCV.tsx    # CV creation page
-│   │   ├── Templates.tsx   # Template selection
-│   │   └── Download.tsx    # Download page
-│   ├── store/              # Zustand stores
-│   ├── utils/              # Utility functions
-│   └── i18n.ts             # Internationalization
-├── public/                   # Static assets
-├── .gitignore
-├── package.json
-├── tsconfig.json
+│   ├── components/
+│   │   ├── CVPreview.tsx          # 6 templates renderer + A4 preview
+│   │   ├── Header.tsx             # Sticky glass nav
+│   │   ├── PersonalInfoForm.tsx   # Photo + socials
+│   │   ├── ExperienceForm.tsx     # With "currently here" toggle
+│   │   ├── EducationForm.tsx
+│   │   ├── SkillsForm.tsx         # Level bars + popular skills
+│   │   ├── LanguagesForm.tsx      # Proficiency bars
+│   │   └── ProjectsForm.tsx       # Tech stack + link
+│   ├── pages/
+│   │   ├── Home.tsx               # Animated hero, mesh gradient, stats
+│   │   ├── CreateCV.tsx           # Step editor, autosave, sticky preview
+│   │   ├── Templates.tsx          # Gallery + accent color picker
+│   │   └── Download.tsx           # PDF export, print, share
+│   ├── store/
+│   │   └── cvStore.ts             # Zustand + persist v2 + sample data
+│   ├── lib/
+│   │   └── utils.ts               # cn() helper (clsx + tailwind-merge)
+│   ├── i18n.ts                    # AR + EN translations
+│   ├── index.css                  # Design system + PDF/print styles
+│   └── App.tsx                    # Router + accent CSS variable injector
+├── public/
+├── index.html
+├── tailwind.config.js
 ├── vite.config.ts
-└── tailwind.config.js
+└── package.json
 ```
-
-## 🎨 التصاميم المتوفرة / Available Templates
-
-1. **بسيط / Minimal** - نظيف وبسيط يركز على المحتوى
-2. **إبداعي / Creative** - تصميم مبدع مع ألوان جذابة
-3. **كلاسيكي / Classic** - تصميم كلاسيكي تقليدي
-4. **حديث / Modern** - حديث وعصري مع تصميم احترافي
-
-## 🔧 التخصيص / Customization
-
-يمكنك تخصيص المشروع بسهولة:
-- إضافة لغات جديدة في ملف `src/i18n.ts`
-- تعديل التصاميم في مكونات `src/components/`
-- إضافة حقول جديدة في مخزن البيانات `src/store/cvStore.ts`
-
-## 📄 الميزات المستقبلية / Future Features
-
-- [ ] دعم قوالب إضافية
-- [ ] تصدير إلى تنسيقات مختلفة (Word, TXT)
-- [ ] مشاركة السيرة الذاتية عبر الرابط
-- [ ] تحليل السيرة الذاتية واقتراحات التحسين
-- [ ] دعم الصور والشعارات
-
-## 🤝 المساهمة / Contributing
-
-نرحب بالمساهمات! يرجى قراءة دليل المساهمة قبل إرسال الطلبات.
-
-Contributions are welcome! Please read the contributing guide before submitting pull requests.
-
-## 📄 الرخصة / License
-
-هذا المشروع مرخص تحت رخصة MIT.
-
-This project is licensed under the MIT License.
-
-## 📞 التواصل / Contact
-
-لأي استفسارات أو اقتراحات:
-For any inquiries or suggestions:
-
-- GitHub: [@rayan-alharbi](https://github.com/rayan-alharbi)
-- المشروع: [cv-Create](https://github.com/rayan-alharbi/cv-Create)
 
 ---
 
-**⭐ لا تنسى إعطاء نجمة للمشروع إذا أعجبك!**
-**⭐ Don't forget to give the project a star if you like it!**
+## 🎨 القوالب المتوفرة / Available Templates
+
+| القالب | النمط | الوصف |
+| --- | --- | --- |
+| **Modern** | Sidebar ملوّن | لوحة جانبية بألوان متدرّجة وتفاصيل أنيقة |
+| **Minimal** | أبيض هادئ | يركّز على المحتوى وفراغات نظيفة |
+| **Creative** | بطاقات مرحة | بطاقات ملوّنة لطابع مميّز |
+| **Classic** | Serif كلاسيكي | تايبوقرافي تقليدية بحروف Cormorant Garamond |
+| **Elegant** | فاخر هادئ | تايبوقرافي رفيعة وتايم لاين رأسي |
+| **Executive** | تنفيذي | هيدر داكن وأعمدة دقيقة للتواريخ |
+
+كل قالب يدعم الألوان الثمانية، وكلها تُعرض بنفس بيانات السيرة آنيًا.
+
+Every template supports all eight accent colors and renders the same data live.
+
+---
+
+## 🔧 التخصيص / Customization
+
+- **إضافة لغة جديدة:** أضف مفاتيح جديدة في `src/i18n.ts` ضمن `resources`.
+- **تعديل قالب موجود أو إضافة قالب جديد:**
+  1. أضف معرّف القالب إلى `TemplateId` في `src/store/cvStore.ts`.
+  2. أضف دالة العرض داخل `src/components/CVPreview.tsx`.
+  3. أدرِجه في قائمة القوالب في `src/pages/Templates.tsx`.
+- **إضافة لون تمييز:** أضف مفتاحًا جديدًا إلى `ACCENT_COLORS` في `cvStore.ts`.
+- **حقول جديدة:** عدّل واجهات `PersonalInfo` / `Experience` / إلخ في `cvStore.ts` ثم اعرضها في القوالب.
+
+---
+
+## 📄 الميزات المستقبلية / Future Roadmap
+
+- [ ] قوالب إضافية (Tech, Academic, Designer)
+- [ ] تصدير DOCX
+- [ ] مشاركة السيرة عبر رابط دائم
+- [ ] AI-powered summary suggestions
+- [ ] استيراد من LinkedIn
+
+---
+
+## 🤝 المساهمة / Contributing
+
+نرحب بالمساهمات! للإبلاغ عن مشكلة أو طلب ميزة:
+[https://github.com/rayan-alharbi/cv-Create/issues](https://github.com/rayan-alharbi/cv-Create/issues)
+
+Contributions welcome! Open an issue or PR at the repo above.
+
+---
+
+## 📄 الرخصة / License
+
+MIT — هذا المشروع مرخّص تحت رخصة MIT. / This project is MIT-licensed.
+
+---
+
+## 📞 التواصل / Contact
+
+- GitHub: [@rayan-alharbi](https://github.com/rayan-alharbi)
+- Repository: [https://github.com/rayan-alharbi/cv-Create](https://github.com/rayan-alharbi/cv-Create)
+
+---
+
+**⭐ لا تنسَ إعطاء المشروع نجمة إن أعجبك!**
+**⭐ If you find this useful, please give it a star!**

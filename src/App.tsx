@@ -1,15 +1,21 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { I18nextProvider } from "react-i18next";
-import i18n from "@/i18n";
-import Home from "@/pages/Home";
-import CreateCV from "@/pages/CreateCV";
-import Templates from "@/pages/Templates";
-import DownloadPage from "@/pages/Download";
-import { useCVStore } from "@/store/cvStore";
-import { useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { I18nextProvider } from 'react-i18next';
+import { useEffect } from 'react';
+import i18n from '@/i18n';
+import Home from '@/pages/Home';
+import CreateCV from '@/pages/CreateCV';
+import Templates from '@/pages/Templates';
+import DownloadPage from '@/pages/Download';
+import { useCVStore, ACCENT_COLORS } from '@/store/cvStore';
+
+function hexToRgbTriplet(hex: string): string {
+  const v = hex.replace('#', '');
+  const n = parseInt(v.length === 3 ? v.split('').map((c) => c + c).join('') : v, 16);
+  return `${(n >> 16) & 255} ${(n >> 8) & 255} ${n & 255}`;
+}
 
 function AppContent() {
-  const { language, theme } = useCVStore();
+  const { language, theme, accentColor } = useCVStore();
 
   useEffect(() => {
     i18n.changeLanguage(language);
@@ -21,8 +27,20 @@ function AppContent() {
     document.documentElement.classList.toggle('dark', theme === 'dark');
   }, [theme]);
 
+  useEffect(() => {
+    const c = ACCENT_COLORS[accentColor];
+    const root = document.documentElement;
+    root.style.setProperty('--accent', hexToRgbTriplet(c.hex));
+    root.style.setProperty('--accent-soft', hexToRgbTriplet(c.light));
+    root.style.setProperty('--accent-strong', hexToRgbTriplet(c.dark));
+  }, [accentColor]);
+
   return (
-    <div className={`min-h-screen bg-white dark:bg-gray-900 transition-colors ${language === 'ar' ? 'font-arabic' : 'font-sans'}`}>
+    <div
+      className={`min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors ${
+        language === 'ar' ? 'font-arabic' : 'font-sans'
+      }`}
+    >
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />

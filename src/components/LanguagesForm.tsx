@@ -1,151 +1,127 @@
 import { useState } from 'react';
-import { useCVStore } from '@/store/cvStore';
+import { useCVStore, type Proficiency } from '@/store/cvStore';
 import { useTranslation } from 'react-i18next';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, X, Languages } from 'lucide-react';
+
+const LEVELS: Proficiency[] = ['basic', 'conversational', 'fluent', 'native'];
+const PROF_PCT: Record<Proficiency, number> = { basic: 25, conversational: 55, fluent: 80, native: 100 };
 
 const LanguagesForm = () => {
   const { t } = useTranslation();
   const { cvData, addLanguage, updateLanguage, removeLanguage, language } = useCVStore();
   const { languages } = cvData;
-  
-  const [newLanguage, setNewLanguage] = useState({
+  const [draft, setDraft] = useState<{ name: string; proficiency: Proficiency }>({
     name: '',
-    proficiency: 'fluent' as const
+    proficiency: 'fluent',
   });
 
-  const handleAdd = () => {
-    if (newLanguage.name) {
-      addLanguage(newLanguage);
-      setNewLanguage({ name: '', proficiency: 'fluent' });
-    }
+  const submit = () => {
+    if (!draft.name.trim()) return;
+    addLanguage(draft);
+    setDraft({ name: '', proficiency: 'fluent' });
   };
 
-  const proficiencyLevels = [
-    { value: 'basic', label: language === 'ar' ? 'أساسي' : 'Basic' },
-    { value: 'conversational', label: language === 'ar' ? 'محادثة' : 'Conversational' },
-    { value: 'fluent', label: language === 'ar' ? 'طلاقة' : 'Fluent' },
-    { value: 'native', label: language === 'ar' ? 'اللغة الأم' : 'Native' }
-  ];
-
-  const commonLanguages = [
+  const common = [
     { code: 'ar', name: language === 'ar' ? 'العربية' : 'Arabic' },
     { code: 'en', name: language === 'ar' ? 'الإنجليزية' : 'English' },
     { code: 'fr', name: language === 'ar' ? 'الفرنسية' : 'French' },
     { code: 'es', name: language === 'ar' ? 'الإسبانية' : 'Spanish' },
     { code: 'de', name: language === 'ar' ? 'الألمانية' : 'German' },
-    { code: 'it', name: language === 'ar' ? 'الإيطالية' : 'Italian' },
+    { code: 'tr', name: language === 'ar' ? 'التركية' : 'Turkish' },
     { code: 'zh', name: language === 'ar' ? 'الصينية' : 'Chinese' },
-    { code: 'ja', name: language === 'ar' ? 'اليابانية' : 'Japanese' }
+    { code: 'ja', name: language === 'ar' ? 'اليابانية' : 'Japanese' },
   ];
 
   return (
-    <div className="space-y-6">
-      {/* Existing Languages */}
+    <div className="space-y-5">
       {languages.length > 0 && (
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-            {t('languages')} ({languages.length})
-          </h3>
-          <div className="grid gap-3">
-            {languages.map((lang) => (
-              <div key={lang.id} className="border border-gray-200 dark:border-gray-600 rounded-lg p-4">
-                <div className="flex justify-between items-start mb-3">
-                  <div className="flex-1">
-                    <input
-                      type="text"
-                      value={lang.name}
-                      onChange={(e) => updateLanguage(lang.id, { name: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm mb-2"
-                      placeholder={t('language')}
-                    />
-                  </div>
-                  <button
-                    onClick={() => removeLanguage(lang.id)}
-                    className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 ml-2"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+        <div className="space-y-3">
+          {languages.map((l) => (
+            <div key={l.id} className="card p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-accent/10 text-accent-strong dark:text-white flex items-center justify-center">
+                  <Languages className="w-4 h-4" />
+                </div>
+                <input
+                  value={l.name}
+                  onChange={(e) => updateLanguage(l.id, { name: e.target.value })}
+                  className="field"
+                  placeholder={t('languageLabel')}
+                />
+                <button onClick={() => removeLanguage(l.id)} className="text-rose-500 opacity-60 hover:opacity-100" aria-label="remove">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="mt-3 flex items-center gap-3">
+                <div className="flex-1 h-2 rounded-full bg-slate-200 dark:bg-white/10 overflow-hidden">
+                  <div
+                    className="h-full rounded-full"
+                    style={{
+                      width: `${PROF_PCT[l.proficiency]}%`,
+                      background: 'linear-gradient(90deg, rgb(var(--accent)) 0%, rgb(var(--accent-strong)) 100%)',
+                    }}
+                  />
                 </div>
                 <select
-                  value={lang.proficiency}
-                  onChange={(e) => updateLanguage(lang.id, { proficiency: e.target.value as any })}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                  value={l.proficiency}
+                  onChange={(e) => updateLanguage(l.id, { proficiency: e.target.value as Proficiency })}
+                  className="field !py-1.5 !w-auto text-xs"
                 >
-                  {proficiencyLevels.map((level) => (
-                    <option key={level.value} value={level.value}>
-                      {level.label}
+                  {LEVELS.map((lvl) => (
+                    <option key={lvl} value={lvl}>
+                      {t(`prof_${lvl}` as const)}
                     </option>
                   ))}
                 </select>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       )}
 
-      {/* Add New Language */}
-      <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4">
-        <h4 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-          <Plus className="w-4 h-4 ml-2" />
-          {t('add')} {t('languages')}
+      <div className="card border-dashed p-5">
+        <h4 className="flex items-center gap-2 font-semibold text-slate-900 dark:text-white mb-4">
+          <Plus className="w-4 h-4" /> {t('addLanguage')}
         </h4>
-        
-        <div className="grid md:grid-cols-2 gap-4 mb-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              {t('language')} *
-            </label>
-            <input
-              type="text"
-              value={newLanguage.name}
-              onChange={(e) => setNewLanguage({ ...newLanguage, name: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-              placeholder={language === 'ar' ? 'مثال: الإنجليزية' : 'e.g. English'}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              {t('proficiency')}
-            </label>
-            <select
-              value={newLanguage.proficiency}
-              onChange={(e) => setNewLanguage({ ...newLanguage, proficiency: e.target.value as any })}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-            >
-              {proficiencyLevels.map((level) => (
-                <option key={level.value} value={level.value}>
-                  {level.label}
-                </option>
-              ))}
-            </select>
-          </div>
+        <div className="grid sm:grid-cols-[1fr_auto_auto] gap-3">
+          <input
+            value={draft.name}
+            onChange={(e) => setDraft({ ...draft, name: e.target.value })}
+            onKeyDown={(e) => e.key === 'Enter' && submit()}
+            className="field"
+            placeholder={language === 'ar' ? 'الإنجليزية' : 'English'}
+          />
+          <select
+            value={draft.proficiency}
+            onChange={(e) => setDraft({ ...draft, proficiency: e.target.value as Proficiency })}
+            className="field"
+          >
+            {LEVELS.map((lvl) => (
+              <option key={lvl} value={lvl}>
+                {t(`prof_${lvl}` as const)}
+              </option>
+            ))}
+          </select>
+          <button onClick={submit} disabled={!draft.name.trim()} className="btn-primary">
+            <Plus className="w-4 h-4" /> {t('add')}
+          </button>
         </div>
-        
-        <button
-          onClick={handleAdd}
-          disabled={!newLanguage.name}
-          className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors text-sm"
-        >
-          <Plus className="w-4 h-4 ml-2" />
-          {t('add')} {t('languages')}
-        </button>
       </div>
 
-      {/* Quick Add Languages */}
-      <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-        <h4 className="font-semibold text-gray-900 dark:text-white mb-3">
-          {language === 'ar' ? 'لغات شائعة' : 'Common Languages'}
-        </h4>
+      <div className="card p-5">
+        <div className="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-3">{t('commonLanguages')}</div>
         <div className="flex flex-wrap gap-2">
-          {commonLanguages.map((lang) => (
-            <button
-              key={lang.code}
-              onClick={() => setNewLanguage({ name: lang.name, proficiency: 'fluent' })}
-              className="px-3 py-1 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm hover:bg-blue-100 dark:hover:bg-blue-900 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
-            >
-              {lang.name}
-            </button>
-          ))}
+          {common
+            .filter((c) => !languages.some((l) => l.name === c.name))
+            .map((c) => (
+              <button
+                key={c.code}
+                onClick={() => addLanguage({ name: c.name, proficiency: 'fluent' })}
+                className="chip hover:bg-accent/10 hover:text-accent-strong dark:hover:text-white transition"
+              >
+                + {c.name}
+              </button>
+            ))}
         </div>
       </div>
     </div>

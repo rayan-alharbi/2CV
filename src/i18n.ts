@@ -4,217 +4,325 @@ import { initReactI18next } from 'react-i18next';
 const resources = {
   ar: {
     translation: {
-      // Navigation
+      brand: 'CVForge',
       home: 'الرئيسية',
-      createCV: 'إنشاء السيرة الذاتية',
-      templates: 'النماذج',
+      createCV: 'إنشاء سيرتي',
+      templates: 'القوالب',
       download: 'تحميل',
-      
-      // Home Page
-      heroTitle: 'أنشئ سيرتك الذاتية الاحترافية في دقائق',
-      heroSubtitle: 'منصة عربية لتصميم سير ذاتية حديثة ومتعددة اللغات مع معاينة مباشرة',
-      createCVNow: 'إنشاء سيرتي الآن',
-      browseTemplates: 'استعراض النماذج',
-      chooseTemplate: 'اختر نموذجًا',
-      whyChooseUs: 'لماذا تختار منصتنا؟',
-      whyChooseUsSubtitle: 'منصة احترافية لتصميم السيرة الذاتية بأحدث التقنيات',
-      startNow: 'ابدأ الآن وانشئ سيرتك الذاتية',
-      startNowSubtitle: 'لا تنتظر أكثر، احصل على وظيفتك المثالية',
-      
-      // Create CV Page
+
+      heroBadge: 'مجاني • بدون تسجيل • فوري',
+      heroTitle: 'صمّم سيرة ذاتية',
+      heroTitleAccent: 'تفتح لك الأبواب',
+      heroSubtitle:
+        'منصة عربية احترافية لإنشاء سير ذاتية أنيقة بمعاينة فورية، ست قوالب، ألوان قابلة للتخصيص، وتصدير PDF بجودة الطباعة.',
+      createCVNow: 'ابدأ الآن مجانًا',
+      browseTemplates: 'استعراض القوالب',
+      tryWithSample: 'تجربة ببيانات تجريبية',
+      chooseTemplate: 'اختر القالب الذي يعبّر عنك',
+
+      featTitle1: 'تجربة سلسة خطوة بخطوة',
+      featDesc1: 'املأ بياناتك في قسم واحد ولاحظ سيرتك تتشكّل أمامك مباشرة.',
+      featTitle2: 'قوالب عصرية قابلة للتخصيص',
+      featDesc2: 'ستة قوالب احترافية وثمانية ألوان لإبراز شخصيتك المهنية.',
+      featTitle3: 'تصدير PDF بجودة طباعة',
+      featDesc3: 'تصدير دقيق بحجم A4 جاهز للإرسال أو الطباعة فورًا.',
+      featTitle4: 'يدعم العربية والإنجليزية',
+      featDesc4: 'دعم كامل لاتجاه RTL وخطوط عربية فاخرة.',
+
+      stats1: 'قالب احترافي',
+      stats2: 'لون قابل للتخصيص',
+      stats3: 'لغة',
+      stats4: 'تصدير فوري',
+
+      whyChooseUs: 'لماذا CVForge؟',
+      whyChooseUsSubtitle: 'كل ما تحتاجه لتصنع انطباعًا أوّل لا يُنسى',
+      startNow: 'سيرتك الجديدة على بُعد دقائق',
+      startNowSubtitle: 'لا تسجيل، لا انتظار، لا قيود. فقط نتائج تستحق المشاركة.',
+
       personalInfo: 'المعلومات الشخصية',
-      contactInfo: 'معلومات الاتصال',
+      contactInfo: 'وسائل التواصل',
       education: 'التعليم',
-      experience: 'الخبرة',
+      experience: 'الخبرة العملية',
       skills: 'المهارات',
       languages: 'اللغات',
       projects: 'المشاريع',
-      
-      // Form Fields
+
       firstName: 'الاسم الأول',
       lastName: 'الاسم الأخير',
       email: 'البريد الإلكتروني',
       phone: 'رقم الهاتف',
       location: 'الموقع',
       jobTitle: 'المسمى الوظيفي',
-      summary: 'ملخص شخصي',
-      
-      // Education
-      school: 'المدرسة/الجامعة',
+      summary: 'نبذة مختصرة',
+      photo: 'الصورة الشخصية',
+      uploadPhoto: 'رفع صورة',
+      removePhoto: 'إزالة الصورة',
+      photoHint: 'JPG أو PNG، أقل من 2MB',
+
+      linkedin: 'LinkedIn',
+      github: 'GitHub',
+      website: 'الموقع الشخصي',
+      twitter: 'X / Twitter',
+
+      school: 'الجامعة / المدرسة',
       degree: 'الدرجة العلمية',
       field: 'مجال الدراسة',
       startDate: 'تاريخ البدء',
       endDate: 'تاريخ الانتهاء',
-      
-      // Experience
+      currentlyHere: 'حتى الآن',
+
       company: 'الشركة',
       position: 'المنصب',
       description: 'الوصف',
-      
-      // Skills
+
       addSkill: 'إضافة مهارة',
       skillName: 'اسم المهارة',
-      skillLevel: 'مستوى المهارة',
-      
-      // Languages
+      skillLevel: 'المستوى',
+      popularSkills: 'مهارات شائعة',
+
       languageLabel: 'اللغة',
-      proficiency: 'المهارة',
+      proficiency: 'المستوى',
       addLanguage: 'إضافة لغة',
-      
-      // Projects
+      commonLanguages: 'لغات شائعة',
+
       projectName: 'اسم المشروع',
       projectDescription: 'وصف المشروع',
       projectLink: 'رابط المشروع',
+      projectTech: 'التقنيات المستخدمة',
       addProject: 'إضافة مشروع',
-      
-      // Actions
+      projectExamples: 'أمثلة جاهزة',
+
       save: 'حفظ',
+      saved: 'تم الحفظ',
+      autosaved: 'حفظ تلقائي',
       next: 'التالي',
       previous: 'السابق',
       add: 'إضافة',
       remove: 'حذف',
       edit: 'تعديل',
       cancel: 'إلغاء',
-      
-      // Templates
-      minimal: 'بسيط',
+      reset: 'إعادة تعيين',
+      loadSample: 'تحميل بيانات تجريبية',
+      backToEdit: 'العودة للتحرير',
+
+      minimal: 'أنيق',
       creative: 'إبداعي',
       classic: 'كلاسيكي',
       modern: 'حديث',
-      
-      // Download
+      elegant: 'فاخر',
+      executive: 'تنفيذي',
+
+      accentColor: 'لون التمييز',
+      template: 'القالب',
+      preview: 'معاينة',
+      livePreview: 'معاينة مباشرة',
+      print: 'طباعة',
       downloadPDF: 'تحميل PDF',
       share: 'مشاركة',
       copyLink: 'نسخ الرابط',
-      
-      // Settings
+      linkCopied: 'تم نسخ الرابط',
+
       language: 'اللغة',
       theme: 'المظهر',
       light: 'فاتح',
       dark: 'داكن',
-      
-      // Messages
+
       dataSaved: 'تم حفظ البيانات بنجاح',
-      errorOccurred: 'حدث خطأ ما',
+      errorOccurred: 'حدث خطأ',
       requiredField: 'هذا الحقل مطلوب',
       invalidEmail: 'بريد إلكتروني غير صالح',
-      
-      // RTL
-      rtl: 'rtl'
-    }
+      emptyPreviewTitle: 'ابدأ بإدخال معلوماتك',
+      emptyPreviewDesc: 'ستظهر السيرة الذاتية هنا أثناء كتابتك',
+      generatingPDF: 'جاري إنشاء PDF...',
+      pdfError: 'حدث خطأ أثناء إنشاء PDF',
+
+      personalSummaryTitle: 'نبذة مختصرة',
+      tipsTitle: 'نصائح سريعة',
+      tip1: 'ابدأ بالأكثر صلة بالوظيفة المستهدفة.',
+      tip2: 'استخدم أرقامًا وإنجازات قابلة للقياس.',
+      tip3: 'حافظ على الإيجاز — صفحة أو صفحتان كحد أقصى.',
+
+      level_beginner: 'مبتدئ',
+      level_intermediate: 'متوسط',
+      level_advanced: 'متقدم',
+      level_expert: 'خبير',
+
+      prof_basic: 'أساسي',
+      prof_conversational: 'محادثة',
+      prof_fluent: 'طلاقة',
+      prof_native: 'اللغة الأم',
+
+      stepProgress: 'الخطوة {{current}} من {{total}}',
+      mobileFormTab: 'تحرير',
+      mobilePreviewTab: 'معاينة',
+
+      builtWith: 'مصنوع بواسطة',
+    },
   },
   en: {
     translation: {
-      // Navigation
+      brand: 'CVForge',
       home: 'Home',
-      createCV: 'Create CV',
+      createCV: 'Build CV',
       templates: 'Templates',
       download: 'Download',
-      
-      // Home Page
-      heroTitle: 'Create Your Professional CV in Minutes',
-      heroSubtitle: 'Arabic platform for designing modern, multilingual resumes with live preview',
-      createCVNow: 'Create My CV Now',
-      browseTemplates: 'Browse Templates',
-      chooseTemplate: 'Choose Template',
-      whyChooseUs: 'Why Choose Our Platform?',
-      whyChooseUsSubtitle: 'Professional platform for CV design with latest technologies',
-      startNow: 'Start Now and Create Your CV',
-      startNowSubtitle: "Don't wait any longer, get your dream job",
-      
-      // Create CV Page
-      personalInfo: 'Personal Information',
-      contactInfo: 'Contact Information',
+
+      heroBadge: 'Free • No sign-up • Instant',
+      heroTitle: 'Craft a resume that',
+      heroTitleAccent: 'opens doors',
+      heroSubtitle:
+        'Beautiful, recruiter-friendly resumes with live preview, six modern templates, customizable accent colors, and pixel-perfect PDF export.',
+      createCVNow: 'Start free',
+      browseTemplates: 'Browse templates',
+      tryWithSample: 'Try with sample data',
+      chooseTemplate: 'Pick a template that matches your story',
+
+      featTitle1: 'Smooth, step-by-step flow',
+      featDesc1: 'Fill one section at a time and watch your CV come alive in real time.',
+      featTitle2: 'Modern, customizable templates',
+      featDesc2: 'Six professional templates and eight accent colors to fit your personality.',
+      featTitle3: 'Print-quality PDF export',
+      featDesc3: 'Pixel-perfect A4 export ready to send or print on the spot.',
+      featTitle4: 'Arabic & English ready',
+      featDesc4: 'Full RTL support with premium Arabic typography.',
+
+      stats1: 'Templates',
+      stats2: 'Accent colors',
+      stats3: 'Languages',
+      stats4: 'Instant export',
+
+      whyChooseUs: 'Why CVForge',
+      whyChooseUsSubtitle: 'Everything you need to make a memorable first impression',
+      startNow: 'Your new resume is minutes away',
+      startNowSubtitle: 'No sign-up, no waiting, no limits — just results worth sharing.',
+
+      personalInfo: 'Personal info',
+      contactInfo: 'Contact',
       education: 'Education',
       experience: 'Experience',
       skills: 'Skills',
       languages: 'Languages',
       projects: 'Projects',
-      
-      // Form Fields
-      firstName: 'First Name',
-      lastName: 'Last Name',
+
+      firstName: 'First name',
+      lastName: 'Last name',
       email: 'Email',
       phone: 'Phone',
       location: 'Location',
-      jobTitle: 'Job Title',
-      summary: 'Professional Summary',
-      
-      // Education
-      school: 'School/University',
+      jobTitle: 'Job title',
+      summary: 'Professional summary',
+      photo: 'Photo',
+      uploadPhoto: 'Upload photo',
+      removePhoto: 'Remove photo',
+      photoHint: 'JPG or PNG, under 2MB',
+
+      linkedin: 'LinkedIn',
+      github: 'GitHub',
+      website: 'Personal website',
+      twitter: 'X / Twitter',
+
+      school: 'School / University',
       degree: 'Degree',
-      field: 'Field of Study',
-      startDate: 'Start Date',
-      endDate: 'End Date',
-      
-      // Experience
+      field: 'Field of study',
+      startDate: 'Start date',
+      endDate: 'End date',
+      currentlyHere: 'Present',
+
       company: 'Company',
       position: 'Position',
       description: 'Description',
-      
-      // Skills
-      addSkill: 'Add Skill',
-      skillName: 'Skill Name',
-      skillLevel: 'Skill Level',
-      
-      // Languages
+
+      addSkill: 'Add skill',
+      skillName: 'Skill',
+      skillLevel: 'Level',
+      popularSkills: 'Popular skills',
+
       languageLabel: 'Language',
       proficiency: 'Proficiency',
-      addLanguage: 'Add Language',
-      
-      // Projects
-      projectName: 'Project Name',
-      projectDescription: 'Project Description',
-      projectLink: 'Project Link',
-      addProject: 'Add Project',
-      
-      // Actions
+      addLanguage: 'Add language',
+      commonLanguages: 'Common languages',
+
+      projectName: 'Project name',
+      projectDescription: 'Description',
+      projectLink: 'Project link',
+      projectTech: 'Tech stack',
+      addProject: 'Add project',
+      projectExamples: 'Project ideas',
+
       save: 'Save',
+      saved: 'Saved',
+      autosaved: 'Auto-saved',
       next: 'Next',
-      previous: 'Previous',
+      previous: 'Back',
       add: 'Add',
       remove: 'Remove',
       edit: 'Edit',
       cancel: 'Cancel',
-      
-      // Templates
+      reset: 'Reset',
+      loadSample: 'Load sample data',
+      backToEdit: 'Back to editor',
+
       minimal: 'Minimal',
       creative: 'Creative',
       classic: 'Classic',
       modern: 'Modern',
-      
-      // Download
+      elegant: 'Elegant',
+      executive: 'Executive',
+
+      accentColor: 'Accent color',
+      template: 'Template',
+      preview: 'Preview',
+      livePreview: 'Live preview',
+      print: 'Print',
       downloadPDF: 'Download PDF',
       share: 'Share',
-      copyLink: 'Copy Link',
-      
-      // Settings
+      copyLink: 'Copy link',
+      linkCopied: 'Link copied',
+
       language: 'Language',
       theme: 'Theme',
       light: 'Light',
       dark: 'Dark',
-      
-      // Messages
-      dataSaved: 'Data saved successfully',
-      errorOccurred: 'An error occurred',
+
+      dataSaved: 'Saved successfully',
+      errorOccurred: 'Something went wrong',
       requiredField: 'This field is required',
       invalidEmail: 'Invalid email address',
-      
-      // RTL
-      rtl: 'ltr'
-    }
-  }
+      emptyPreviewTitle: 'Start adding your info',
+      emptyPreviewDesc: 'Your resume will take shape as you type',
+      generatingPDF: 'Generating PDF…',
+      pdfError: 'Failed to generate PDF',
+
+      personalSummaryTitle: 'Summary',
+      tipsTitle: 'Quick tips',
+      tip1: 'Lead with what is most relevant to the role.',
+      tip2: 'Use measurable achievements and numbers.',
+      tip3: 'Keep it concise — one to two pages max.',
+
+      level_beginner: 'Beginner',
+      level_intermediate: 'Intermediate',
+      level_advanced: 'Advanced',
+      level_expert: 'Expert',
+
+      prof_basic: 'Basic',
+      prof_conversational: 'Conversational',
+      prof_fluent: 'Fluent',
+      prof_native: 'Native',
+
+      stepProgress: 'Step {{current}} of {{total}}',
+      mobileFormTab: 'Edit',
+      mobilePreviewTab: 'Preview',
+
+      builtWith: 'Built with',
+    },
+  },
 };
 
-i18n
-  .use(initReactI18next)
-  .init({
-    resources,
-    lng: 'ar',
-    fallbackLng: 'en',
-    interpolation: {
-      escapeValue: false
-    }
-  });
+i18n.use(initReactI18next).init({
+  resources,
+  lng: 'ar',
+  fallbackLng: 'en',
+  interpolation: { escapeValue: false },
+});
 
 export default i18n;

@@ -1,200 +1,179 @@
 import { useState } from 'react';
 import { useCVStore } from '@/store/cvStore';
 import { useTranslation } from 'react-i18next';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, Briefcase } from 'lucide-react';
+
+const empty = {
+  company: '',
+  position: '',
+  startDate: '',
+  endDate: '',
+  current: false,
+  description: '',
+};
 
 const ExperienceForm = () => {
   const { t } = useTranslation();
   const { cvData, addExperience, updateExperience, removeExperience, language } = useCVStore();
   const { experience } = cvData;
-  
-  const [newExperience, setNewExperience] = useState({
-    company: '',
-    position: '',
-    startDate: '',
-    endDate: '',
-    description: ''
-  });
+  const [draft, setDraft] = useState(empty);
 
-  const handleAdd = () => {
-    if (newExperience.company && newExperience.position) {
-      addExperience(newExperience);
-      setNewExperience({
-        company: '',
-        position: '',
-        startDate: '',
-        endDate: '',
-        description: ''
-      });
-    }
+  const submit = () => {
+    if (!draft.company || !draft.position) return;
+    addExperience(draft);
+    setDraft(empty);
   };
 
   return (
-    <div className="space-y-6">
-      {/* Existing Experience */}
-      {experience.length > 0 && (
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-            {t('experience')} ({experience.length})
-          </h3>
-          {experience.map((exp) => (
-            <div key={exp.id} className="border border-gray-200 dark:border-gray-600 rounded-lg p-4">
-              <div className="flex justify-between items-start mb-3">
-                <h4 className="font-semibold text-gray-900 dark:text-white">
-                  {exp.position}
-                </h4>
-                <button
-                  onClick={() => removeExperience(exp.id)}
-                  className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
+    <div className="space-y-5">
+      {experience.map((exp) => (
+        <div key={exp.id} className="card p-5">
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-accent/10 text-accent-strong dark:text-white flex items-center justify-center">
+                <Briefcase className="w-4 h-4" />
               </div>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    {t('company')} *
-                  </label>
-                  <input
-                    type="text"
-                    value={exp.company}
-                    onChange={(e) => updateExperience(exp.id, { company: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    {t('position')} *
-                  </label>
-                  <input
-                    type="text"
-                    value={exp.position}
-                    onChange={(e) => updateExperience(exp.id, { position: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    {t('startDate')}
-                  </label>
-                  <input
-                    type="month"
-                    value={exp.startDate}
-                    onChange={(e) => updateExperience(exp.id, { startDate: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    {t('endDate')}
-                  </label>
-                  <input
-                    type="month"
-                    value={exp.endDate}
-                    onChange={(e) => updateExperience(exp.id, { endDate: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                  />
-                </div>
+              <div>
+                <div className="font-semibold text-slate-900 dark:text-white">{exp.position || t('position')}</div>
+                <div className="text-xs text-slate-500">{exp.company}</div>
               </div>
-              <div className="mt-3">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  {t('description')}
-                </label>
-                <textarea
-                  value={exp.description}
-                  onChange={(e) => updateExperience(exp.id, { description: e.target.value })}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                  placeholder={language === 'ar' ? 'وصف المهام والمسؤوليات...' : 'Description of tasks and responsibilities...'}
+            </div>
+            <button onClick={() => removeExperience(exp.id)} className="opacity-60 hover:opacity-100 text-rose-500" aria-label="remove">
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-3">
+            <Field label={t('company')} value={exp.company} onChange={(v) => updateExperience(exp.id, { company: v })} />
+            <Field label={t('position')} value={exp.position} onChange={(v) => updateExperience(exp.id, { position: v })} />
+            <DateField label={t('startDate')} value={exp.startDate} onChange={(v) => updateExperience(exp.id, { startDate: v })} />
+            <div>
+              <label className="label">{t('endDate')}</label>
+              <div className="flex gap-2">
+                <input
+                  type="month"
+                  value={exp.endDate}
+                  onChange={(e) => updateExperience(exp.id, { endDate: e.target.value, current: false })}
+                  className="field"
+                  disabled={exp.current}
+                  dir="ltr"
                 />
               </div>
+              <label className="mt-2 inline-flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
+                <input
+                  type="checkbox"
+                  checked={exp.current}
+                  onChange={(e) => updateExperience(exp.id, { current: e.target.checked, endDate: e.target.checked ? '' : exp.endDate })}
+                  className="rounded border-slate-300"
+                />
+                {t('currentlyHere')}
+              </label>
             </div>
-          ))}
-        </div>
-      )}
+          </div>
 
-      {/* Add New Experience */}
-      <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4">
-        <h4 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-          <Plus className="w-4 h-4 ml-2" />
-          {t('add')} {t('experience')}
-        </h4>
-        
-        <div className="grid md:grid-cols-2 gap-4 mb-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              {t('company')} *
-            </label>
-            <input
-              type="text"
-              value={newExperience.company}
-              onChange={(e) => setNewExperience({ ...newExperience, company: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-              placeholder={language === 'ar' ? 'مثال: شركة التقنية' : 'e.g. Tech Company'}
+          <div className="mt-3">
+            <label className="label">{t('description')}</label>
+            <textarea
+              value={exp.description}
+              onChange={(e) => updateExperience(exp.id, { description: e.target.value })}
+              rows={3}
+              className="field"
+              placeholder={language === 'ar' ? 'استخدم نقاطًا قصيرة بأرقام وإنجازات...' : 'Use short bullets with metrics and impact…'}
             />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              {t('position')} *
-            </label>
-            <input
-              type="text"
-              value={newExperience.position}
-              onChange={(e) => setNewExperience({ ...newExperience, position: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-              placeholder={language === 'ar' ? 'مثال: مطور ويب' : 'e.g. Web Developer'}
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                {t('startDate')}
-              </label>
-              <input
-                type="month"
-                value={newExperience.startDate}
-                onChange={(e) => setNewExperience({ ...newExperience, startDate: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                {t('endDate')}
-              </label>
-              <input
-                type="month"
-                value={newExperience.endDate}
-                onChange={(e) => setNewExperience({ ...newExperience, endDate: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-              />
-            </div>
           </div>
         </div>
-        
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            {t('description')}
-          </label>
+      ))}
+
+      <div className="card border-dashed p-5">
+        <h4 className="flex items-center gap-2 font-semibold text-slate-900 dark:text-white mb-4">
+          <Plus className="w-4 h-4" /> {t('add')} {t('experience')}
+        </h4>
+        <div className="grid sm:grid-cols-2 gap-3">
+          <Field
+            label={`${t('company')} *`}
+            value={draft.company}
+            onChange={(v) => setDraft({ ...draft, company: v })}
+            placeholder={language === 'ar' ? 'شركة التقنية' : 'Tech Co.'}
+          />
+          <Field
+            label={`${t('position')} *`}
+            value={draft.position}
+            onChange={(v) => setDraft({ ...draft, position: v })}
+            placeholder={language === 'ar' ? 'مهندس برمجيات' : 'Software Engineer'}
+          />
+          <DateField label={t('startDate')} value={draft.startDate} onChange={(v) => setDraft({ ...draft, startDate: v })} />
+          <div>
+            <label className="label">{t('endDate')}</label>
+            <input
+              type="month"
+              value={draft.endDate}
+              onChange={(e) => setDraft({ ...draft, endDate: e.target.value, current: false })}
+              className="field"
+              disabled={draft.current}
+              dir="ltr"
+            />
+            <label className="mt-2 inline-flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
+              <input
+                type="checkbox"
+                checked={draft.current}
+                onChange={(e) => setDraft({ ...draft, current: e.target.checked, endDate: e.target.checked ? '' : draft.endDate })}
+                className="rounded border-slate-300"
+              />
+              {t('currentlyHere')}
+            </label>
+          </div>
+        </div>
+        <div className="mt-3">
+          <label className="label">{t('description')}</label>
           <textarea
-            value={newExperience.description}
-            onChange={(e) => setNewExperience({ ...newExperience, description: e.target.value })}
+            value={draft.description}
+            onChange={(e) => setDraft({ ...draft, description: e.target.value })}
             rows={3}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-            placeholder={language === 'ar' ? 'وصف المهام والمسؤوليات...' : 'Description of tasks and responsibilities...'}
+            className="field"
           />
         </div>
-        
-        <button
-          onClick={handleAdd}
-          disabled={!newExperience.company || !newExperience.position}
-          className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors text-sm"
-        >
-          <Plus className="w-4 h-4 ml-2" />
-          {t('add')} {t('experience')}
+        <button onClick={submit} disabled={!draft.company || !draft.position} className="btn-primary mt-4 text-xs">
+          <Plus className="w-3.5 h-3.5" /> {t('add')}
         </button>
       </div>
     </div>
   );
 };
+
+function Field({
+  label,
+  value,
+  onChange,
+  placeholder,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+}) {
+  return (
+    <div>
+      <label className="label">{label}</label>
+      <input type="text" value={value} onChange={(e) => onChange(e.target.value)} className="field" placeholder={placeholder} />
+    </div>
+  );
+}
+
+function DateField({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div>
+      <label className="label">{label}</label>
+      <input type="month" value={value} onChange={(e) => onChange(e.target.value)} className="field" dir="ltr" />
+    </div>
+  );
+}
 
 export default ExperienceForm;

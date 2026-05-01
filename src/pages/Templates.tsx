@@ -1,151 +1,132 @@
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { Check, Download, Eye } from 'lucide-react';
-import { useCVStore } from '@/store/cvStore';
+import { Link } from 'react-router-dom';
+import { Check, Download, ArrowLeft, ArrowRight, Palette } from 'lucide-react';
+import { useCVStore, ACCENT_COLORS, type AccentColor, type TemplateId } from '@/store/cvStore';
 import Header from '@/components/Header';
 import CVPreview from '@/components/CVPreview';
+import { cn } from '@/lib/utils';
 
 const Templates = () => {
   const { t } = useTranslation();
-  const { selectedTemplate, setSelectedTemplate, cvData, language } = useCVStore();
-  const [previewTemplate, setPreviewTemplate] = useState(selectedTemplate);
+  const { selectedTemplate, setSelectedTemplate, accentColor, setAccentColor, language } = useCVStore();
+  const isRtl = language === 'ar';
+  const Arrow = isRtl ? ArrowLeft : ArrowRight;
 
-  const templates = [
-    {
-      id: 'minimal',
-      name: t('minimal'),
-      description: language === 'ar' ? 'نظيف وبسيط يركز على المحتوى' : 'Clean and simple focusing on content',
-      preview: '/templates/minimal.jpg',
-      color: 'bg-blue-50 dark:bg-blue-900',
-      accent: 'border-blue-500'
-    },
-    {
-      id: 'creative',
-      name: t('creative'),
-      description: language === 'ar' ? 'تصميم مبدع مع ألوان جذابة' : 'Creative design with attractive colors',
-      preview: '/templates/creative.jpg',
-      color: 'bg-purple-50 dark:bg-purple-900',
-      accent: 'border-purple-500'
-    },
-    {
-      id: 'classic',
-      name: t('classic'),
-      description: language === 'ar' ? 'تصميم كلاسيكي تقليدي' : 'Traditional classic design',
-      preview: '/templates/classic.jpg',
-      color: 'bg-gray-50 dark:bg-gray-800',
-      accent: 'border-gray-700'
-    },
-    {
-      id: 'modern',
-      name: t('modern'),
-      description: language === 'ar' ? 'حديث وعصري مع تصميم احترافي' : 'Modern and contemporary with professional design',
-      preview: '/templates/modern.jpg',
-      color: 'bg-green-50 dark:bg-green-900',
-      accent: 'border-green-500'
-    }
+  const templates: { id: TemplateId; description: string }[] = [
+    { id: 'modern', description: language === 'ar' ? 'لوحة جانبية ملوّنة وتفاصيل أنيقة' : 'Vibrant sidebar with crisp typography' },
+    { id: 'minimal', description: language === 'ar' ? 'أبيض، نظيف، يركّز على المحتوى' : 'Whitespace-first and content-focused' },
+    { id: 'creative', description: language === 'ar' ? 'بطاقات ملوّنة لطابع مميّز' : 'Bold cards with playful color' },
+    { id: 'elegant', description: language === 'ar' ? 'هادئ، فاخر، بحروف رفيعة' : 'Refined typography, subtle accents' },
+    { id: 'classic', description: language === 'ar' ? 'كلاسيكي بخط مقروء' : 'Timeless serif layout' },
+    { id: 'executive', description: language === 'ar' ? 'هيدر داكن ومحاذاة بالأعمدة' : 'Dark header, column alignment' },
   ];
 
-  const handleTemplateSelect = (templateId: any) => {
-    setSelectedTemplate(templateId);
-    setPreviewTemplate(templateId);
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
       <Header />
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="text-center mb-10"
+        >
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 dark:text-white">
             {t('chooseTemplate')}
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300">
-            {language === 'ar' ? 'اختر النموذج الذي يناسب شخصيتك المهنية' : 'Choose the template that suits your professional personality'}
+          <p className="mt-2 text-base text-slate-600 dark:text-slate-300">
+            {language === 'ar' ? 'كل قالب مصمم بعناية ليبرز شخصيتك المهنية' : 'Each template is hand-crafted to highlight your story'}
           </p>
+        </motion.div>
+
+        <div className="card p-4 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-200">
+            <Palette className="w-4 h-4" /> {t('accentColor')}
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {(Object.keys(ACCENT_COLORS) as AccentColor[]).map((c) => (
+              <button
+                key={c}
+                onClick={() => setAccentColor(c)}
+                className={cn(
+                  'group relative w-9 h-9 rounded-full transition focus:outline-none',
+                  accentColor === c ? 'ring-2 ring-offset-2 ring-offset-white dark:ring-offset-slate-950' : ''
+                )}
+                style={{
+                  background: `linear-gradient(135deg, ${ACCENT_COLORS[c].hex} 0%, ${ACCENT_COLORS[c].dark} 100%)`,
+                  ['--tw-ring-color' as any]: ACCENT_COLORS[c].hex,
+                }}
+                aria-label={c}
+              >
+                {accentColor === c && <Check className="w-4 h-4 text-white absolute inset-0 m-auto" />}
+              </button>
+            ))}
+          </div>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Template Selection */}
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-              {t('templates')}
-            </h2>
-            
-            <div className="grid gap-4">
-              {templates.map((template) => (
-                <motion.div
-                  key={template.id}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                    selectedTemplate === template.id
-                      ? `${template.accent} bg-opacity-20`
-                      : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
-                  } ${template.color}`}
-                  onClick={() => handleTemplateSelect(template.id)}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
+          {templates.map((tpl, i) => (
+            <motion.button
+              key={tpl.id}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: i * 0.05 }}
+              whileHover={{ y: -3 }}
+              onClick={() => setSelectedTemplate(tpl.id)}
+              className={cn(
+                'group text-start card overflow-hidden ring-2 transition relative',
+                selectedTemplate === tpl.id ? 'ring-accent' : 'ring-transparent'
+              )}
+              style={{ ['--tw-ring-color' as any]: 'rgb(var(--accent))' }}
+            >
+              {selectedTemplate === tpl.id && (
+                <div
+                  className="absolute top-3 end-3 z-10 w-7 h-7 rounded-full flex items-center justify-center text-white shadow-soft"
+                  style={{ background: 'rgb(var(--accent))' }}
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3 rtl:space-x-reverse">
-                      <div className={`w-12 h-12 rounded-lg ${template.color} border-2 ${template.accent} flex items-center justify-center`}>
-                        <div className="w-6 h-6 bg-current rounded opacity-20"></div>
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white">
-                          {template.name}
-                        </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-300">
-                          {template.description}
-                        </p>
-                      </div>
-                    </div>
-                    {selectedTemplate === template.id && (
-                      <Check className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                    )}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-
-          {/* Live Preview */}
-          <div>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                {language === 'ar' ? 'معاينة مباشرة' : 'Live Preview'}
-              </h2>
-              <div className="flex space-x-2 rtl:space-x-reverse">
-                <button
-                  onClick={() => setPreviewTemplate(previewTemplate)}
-                  className="flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
-                >
-                  <Eye className="w-4 h-4 ml-2" />
-                  {language === 'ar' ? 'تحديث' : 'Update'}
-                </button>
+                  <Check className="w-4 h-4" />
+                </div>
+              )}
+              <div className="aspect-[3/4] bg-slate-100 dark:bg-slate-900 overflow-hidden relative">
+                <div className="absolute inset-0 origin-top-left" style={{ transform: 'scale(0.32)', transformOrigin: isRtl ? 'top right' : 'top left', width: '312%', height: '312%' }}>
+                  <CVPreview template={tpl.id} />
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/0 via-transparent to-transparent group-hover:from-black/10 transition" />
               </div>
-            </div>
-            
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 min-h-96">
+              <div className="p-4 flex items-center justify-between">
+                <div>
+                  <div className="text-sm font-semibold text-slate-900 dark:text-white">{t(tpl.id)}</div>
+                  <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{tpl.description}</div>
+                </div>
+              </div>
+            </motion.button>
+          ))}
+        </div>
+
+        <div className="card p-4 sm:p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white">{t('livePreview')}</h2>
+            <span className="chip">{t(selectedTemplate)}</span>
+          </div>
+          <div className="bg-slate-100 dark:bg-slate-900 rounded-xl p-4 sm:p-6 overflow-auto scrollbar-thin">
+            <div className="mx-auto bg-white shadow-2xl rounded-md overflow-hidden" style={{ maxWidth: '820px' }}>
               <CVPreview />
             </div>
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex justify-center space-x-4 rtl:space-x-reverse mt-12">
-          <button
-            onClick={() => window.history.back()}
-            className="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium"
-          >
-            {t('previous')}
-          </button>
-          <button
-            onClick={() => window.location.href = '/download'}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center"
-          >
-            <Download className="w-4 h-4 ml-2" />
+        <div className="flex flex-col sm:flex-row justify-center gap-3 mt-10">
+          <Link to="/create" className="btn-ghost">
+            <ArrowLeft className={cn('w-4 h-4', isRtl && 'rotate-180')} />
+            {t('backToEdit')}
+          </Link>
+          <Link to="/download" className="btn-primary">
+            <Download className="w-4 h-4" />
             {t('downloadPDF')}
-          </button>
+            <Arrow className="w-4 h-4" />
+          </Link>
         </div>
       </div>
     </div>

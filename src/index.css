@@ -1,83 +1,235 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Arabic:wght@300;400;500;600;700;800&family=Cormorant+Garamond:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-  line-height: 1.5;
-  font-weight: 400;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Arabic Font */
-.font-arabic {
-  font-family: 'Noto Sans Arabic', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-}
-
-/* RTL Support */
-[dir="rtl"] {
-  text-align: right;
-}
-
-[dir="ltr"] {
-  text-align: left;
-}
-
-/* Dark mode support */
-.dark {
-  color-scheme: dark;
-}
-
-/* Smooth transitions */
-* {
-  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
-}
-
-.dark ::-webkit-scrollbar-track {
-  background: #374151;
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background: #6b7280;
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
-}
-
-/* Print styles */
-@media print {
-  body {
-    print-color-adjust: exact;
-    -webkit-print-color-adjust: exact;
+@layer base {
+  :root {
+    --accent: 37 99 235;
+    --accent-soft: 219 234 254;
+    --accent-strong: 30 64 175;
   }
-  
-  .no-print {
-    display: none !important;
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1.6;
+    font-feature-settings: 'cv11', 'ss01';
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  [lang='ar'],
+  .font-arabic,
+  .font-arabic * {
+    font-family: 'Noto Sans Arabic', 'Inter', sans-serif;
+  }
+
+  ::selection {
+    background-color: rgb(var(--accent) / 0.25);
+    color: inherit;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-medium text-sm
+           transition-all duration-200 select-none disabled:opacity-50 disabled:cursor-not-allowed
+           focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-accent;
+  }
+  .btn-primary {
+    @apply btn text-white shadow-soft;
+    background-image: linear-gradient(135deg, rgb(var(--accent)) 0%, rgb(var(--accent-strong)) 100%);
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 30px -10px rgb(var(--accent) / 0.55);
+  }
+  .btn-ghost {
+    @apply btn text-slate-700 dark:text-slate-200 bg-white/70 dark:bg-white/5
+           border border-slate-200 dark:border-white/10 backdrop-blur
+           hover:bg-white dark:hover:bg-white/10;
+  }
+  .btn-soft {
+    @apply btn text-accent-strong dark:text-white;
+    background-color: rgb(var(--accent) / 0.10);
+  }
+  .btn-soft:hover {
+    background-color: rgb(var(--accent) / 0.18);
+  }
+  .btn-danger {
+    @apply btn bg-rose-50 text-rose-600 hover:bg-rose-100 dark:bg-rose-500/10 dark:text-rose-300 dark:hover:bg-rose-500/20;
+  }
+
+  .card {
+    @apply bg-white dark:bg-slate-900/60 border border-slate-200/70 dark:border-white/10
+           rounded-2xl shadow-soft;
+  }
+  .glass {
+    @apply backdrop-blur-xl bg-white/70 dark:bg-slate-900/50
+           border border-white/40 dark:border-white/10;
+  }
+
+  .field {
+    @apply w-full px-3.5 py-2.5 rounded-xl text-sm
+           bg-white dark:bg-slate-800/60
+           border border-slate-200 dark:border-white/10
+           text-slate-900 dark:text-slate-100 placeholder:text-slate-400
+           focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent
+           transition-all;
+  }
+  .label {
+    @apply block text-xs font-semibold tracking-wide uppercase text-slate-600 dark:text-slate-400 mb-1.5;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium
+           bg-slate-100 text-slate-700 dark:bg-white/5 dark:text-slate-200;
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(120deg, rgb(var(--accent)) 0%, #a855f7 50%, #ec4899 100%);
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgb(148 163 184 / 0.4);
+    border-radius: 999px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: rgb(148 163 184 / 0.7);
+  }
+
+  .bg-mesh {
+    background-color: #0b1020;
+    background-image:
+      radial-gradient(at 12% 18%, rgb(var(--accent) / 0.35) 0px, transparent 50%),
+      radial-gradient(at 88% 22%, rgba(168, 85, 247, 0.30) 0px, transparent 50%),
+      radial-gradient(at 78% 88%, rgba(236, 72, 153, 0.25) 0px, transparent 50%),
+      radial-gradient(at 18% 78%, rgba(20, 184, 166, 0.25) 0px, transparent 50%);
+  }
+  .bg-mesh-light {
+    background-color: #f8fafc;
+    background-image:
+      radial-gradient(at 12% 18%, rgb(var(--accent) / 0.18) 0px, transparent 50%),
+      radial-gradient(at 88% 22%, rgba(168, 85, 247, 0.18) 0px, transparent 50%),
+      radial-gradient(at 78% 88%, rgba(236, 72, 153, 0.14) 0px, transparent 50%),
+      radial-gradient(at 18% 78%, rgba(20, 184, 166, 0.14) 0px, transparent 50%);
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* PDF / print export — force light colors and explicit Arabic font support */
+.pdf-render {
+  color-scheme: light !important;
+  background: #ffffff !important;
+  color: #1e293b !important;
+  font-family: 'Inter', 'Noto Sans Arabic', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif !important;
+  /* exact A4 width @ 96dpi (210mm = 793.7px) */
+  width: 210mm;
+  min-height: 297mm;
+}
+.pdf-render * {
+  color-scheme: light !important;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+.pdf-render[dir='rtl'],
+.pdf-render[dir='rtl'] * {
+  font-family: 'Noto Sans Arabic', 'Inter', Arial, sans-serif !important;
+}
+
+/* Arabic shaping fix: uppercase + letter-spacing break ligatures and split connected letters,
+   so disable them inside the RTL CV. Keeps "نبذة مختصرة" connected and readable in PDF / print. */
+.pdf-render[dir='rtl'] h1,
+.pdf-render[dir='rtl'] h2,
+.pdf-render[dir='rtl'] h3,
+.pdf-render[dir='rtl'] h4,
+.pdf-render[dir='rtl'] h5,
+.pdf-render[dir='rtl'] h6,
+.pdf-render[dir='rtl'] .uppercase,
+.pdf-render[dir='rtl'] [class*='tracking-'] {
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  font-feature-settings: 'liga' 1, 'calt' 1, 'kern' 1;
+}
+.pdf-render[dir='rtl'] h3 {
+  font-weight: 700;
+}
+
+/* avoid splitting items mid-block when paginating */
+.pdf-render section,
+.pdf-render .pdf-item {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+/* PDF capture mode — disable transitions/animations so html2canvas snapshots are stable */
+.pdf-capturing,
+.pdf-capturing * {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Print: only the CV is visible, perfectly sized to one or more A4 pages */
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+  html,
+  body {
+    background: #ffffff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  body * {
+    visibility: hidden !important;
+  }
+  .print-target,
+  .print-target * {
+    visibility: visible !important;
+  }
+  .print-target {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 210mm !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

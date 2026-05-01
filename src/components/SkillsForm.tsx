@@ -1,138 +1,132 @@
 import { useState } from 'react';
-import { useCVStore } from '@/store/cvStore';
+import { useCVStore, type SkillLevel } from '@/store/cvStore';
 import { useTranslation } from 'react-i18next';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, X, Sparkles } from 'lucide-react';
+
+const LEVELS: SkillLevel[] = ['beginner', 'intermediate', 'advanced', 'expert'];
+const LEVEL_PCT: Record<SkillLevel, number> = {
+  beginner: 25,
+  intermediate: 55,
+  advanced: 80,
+  expert: 100,
+};
+
+const POPULAR = [
+  'JavaScript',
+  'TypeScript',
+  'React',
+  'Next.js',
+  'Node.js',
+  'Python',
+  'SQL',
+  'Tailwind CSS',
+  'Figma',
+  'AWS',
+  'Docker',
+  'Git',
+];
 
 const SkillsForm = () => {
   const { t } = useTranslation();
   const { cvData, addSkill, updateSkill, removeSkill, language } = useCVStore();
   const { skills } = cvData;
-  
-  const [newSkill, setNewSkill] = useState({
+  const [draft, setDraft] = useState<{ name: string; level: SkillLevel }>({
     name: '',
-    level: 'intermediate' as const
+    level: 'advanced',
   });
 
-  const handleAdd = () => {
-    if (newSkill.name) {
-      addSkill(newSkill);
-      setNewSkill({ name: '', level: 'intermediate' });
-    }
+  const submit = () => {
+    if (!draft.name.trim()) return;
+    addSkill(draft);
+    setDraft({ name: '', level: 'advanced' });
   };
 
-  const skillLevels = [
-    { value: 'beginner', label: language === 'ar' ? 'مبتدئ' : 'Beginner' },
-    { value: 'intermediate', label: language === 'ar' ? 'متوسط' : 'Intermediate' },
-    { value: 'advanced', label: language === 'ar' ? 'متقدم' : 'Advanced' },
-    { value: 'expert', label: language === 'ar' ? 'خبير' : 'Expert' }
-  ];
-
   return (
-    <div className="space-y-6">
-      {/* Existing Skills */}
+    <div className="space-y-5">
       {skills.length > 0 && (
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-            {t('skills')} ({skills.length})
-          </h3>
-          <div className="grid gap-3">
-            {skills.map((skill) => (
-              <div key={skill.id} className="border border-gray-200 dark:border-gray-600 rounded-lg p-4">
-                <div className="flex justify-between items-start mb-3">
-                  <div className="flex-1">
-                    <input
-                      type="text"
-                      value={skill.name}
-                      onChange={(e) => updateSkill(skill.id, { name: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm mb-2"
-                      placeholder={t('skillName')}
-                    />
-                  </div>
-                  <button
-                    onClick={() => removeSkill(skill.id)}
-                    className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 ml-2"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+        <div className="space-y-3">
+          {skills.map((s) => (
+            <div key={s.id} className="card p-4">
+              <div className="flex items-center gap-3">
+                <input
+                  type="text"
+                  value={s.name}
+                  onChange={(e) => updateSkill(s.id, { name: e.target.value })}
+                  className="field"
+                  placeholder={t('skillName')}
+                />
+                <button onClick={() => removeSkill(s.id)} className="text-rose-500 opacity-60 hover:opacity-100" aria-label="remove">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="mt-3 flex items-center gap-3">
+                <div className="flex-1 h-2 rounded-full bg-slate-200 dark:bg-white/10 overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all duration-300"
+                    style={{
+                      width: `${LEVEL_PCT[s.level]}%`,
+                      background: 'linear-gradient(90deg, rgb(var(--accent)) 0%, rgb(var(--accent-strong)) 100%)',
+                    }}
+                  />
                 </div>
                 <select
-                  value={skill.level}
-                  onChange={(e) => updateSkill(skill.id, { level: e.target.value as any })}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                  value={s.level}
+                  onChange={(e) => updateSkill(s.id, { level: e.target.value as SkillLevel })}
+                  className="field !py-1.5 !w-auto text-xs"
                 >
-                  {skillLevels.map((level) => (
-                    <option key={level.value} value={level.value}>
-                      {level.label}
+                  {LEVELS.map((lvl) => (
+                    <option key={lvl} value={lvl}>
+                      {t(`level_${lvl}` as const)}
                     </option>
                   ))}
                 </select>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       )}
 
-      {/* Add New Skill */}
-      <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4">
-        <h4 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-          <Plus className="w-4 h-4 ml-2" />
-          {t('add')} {t('skills')}
+      <div className="card border-dashed p-5">
+        <h4 className="flex items-center gap-2 font-semibold text-slate-900 dark:text-white mb-4">
+          <Plus className="w-4 h-4" /> {t('addSkill')}
         </h4>
-        
-        <div className="grid md:grid-cols-2 gap-4 mb-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              {t('skillName')} *
-            </label>
-            <input
-              type="text"
-              value={newSkill.name}
-              onChange={(e) => setNewSkill({ ...newSkill, name: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-              placeholder={language === 'ar' ? 'مثال: JavaScript' : 'e.g. JavaScript'}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              {t('skillLevel')}
-            </label>
-            <select
-              value={newSkill.level}
-              onChange={(e) => setNewSkill({ ...newSkill, level: e.target.value as any })}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-            >
-              {skillLevels.map((level) => (
-                <option key={level.value} value={level.value}>
-                  {level.label}
-                </option>
-              ))}
-            </select>
-          </div>
+        <div className="grid sm:grid-cols-[1fr_auto_auto] gap-3">
+          <input
+            value={draft.name}
+            onChange={(e) => setDraft({ ...draft, name: e.target.value })}
+            onKeyDown={(e) => e.key === 'Enter' && submit()}
+            className="field"
+            placeholder={language === 'ar' ? 'مثال: TypeScript' : 'e.g. TypeScript'}
+          />
+          <select
+            value={draft.level}
+            onChange={(e) => setDraft({ ...draft, level: e.target.value as SkillLevel })}
+            className="field"
+          >
+            {LEVELS.map((lvl) => (
+              <option key={lvl} value={lvl}>
+                {t(`level_${lvl}` as const)}
+              </option>
+            ))}
+          </select>
+          <button onClick={submit} disabled={!draft.name.trim()} className="btn-primary">
+            <Plus className="w-4 h-4" /> {t('add')}
+          </button>
         </div>
-        
-        <button
-          onClick={handleAdd}
-          disabled={!newSkill.name}
-          className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors text-sm"
-        >
-          <Plus className="w-4 h-4 ml-2" />
-          {t('add')} {t('skills')}
-        </button>
       </div>
 
-      {/* Quick Add Skills */}
-      <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-        <h4 className="font-semibold text-gray-900 dark:text-white mb-3">
-          {language === 'ar' ? 'مهارات شائعة' : 'Popular Skills'}
-        </h4>
+      <div className="card p-5">
+        <div className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-200 mb-3">
+          <Sparkles className="w-4 h-4 text-accent" /> {t('popularSkills')}
+        </div>
         <div className="flex flex-wrap gap-2">
-          {['JavaScript', 'React', 'TypeScript', 'Node.js', 'Python', 'CSS', 'HTML', 'Git', 'SQL', 'MongoDB'].map((skill) => (
+          {POPULAR.filter((p) => !skills.some((s) => s.name.toLowerCase() === p.toLowerCase())).map((s) => (
             <button
-              key={skill}
-              onClick={() => setNewSkill({ name: skill, level: 'intermediate' })}
-              className="px-3 py-1 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm hover:bg-blue-100 dark:hover:bg-blue-900 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+              key={s}
+              onClick={() => addSkill({ name: s, level: 'advanced' })}
+              className="chip hover:bg-accent/10 hover:text-accent-strong dark:hover:text-white transition"
             >
-              {skill}
+              + {s}
             </button>
           ))}
         </div>

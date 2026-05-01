@@ -1,228 +1,254 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { Download as DownloadIcon, Share2, Copy, Check, Eye } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import {
+  Download as DownloadIcon,
+  Share2,
+  Copy,
+  Check,
+  Printer,
+  ArrowLeft,
+  ArrowRight,
+  Sparkles,
+} from 'lucide-react';
+import jsPDF from 'jspdf';
 import { useCVStore } from '@/store/cvStore';
 import Header from '@/components/Header';
 import CVPreview from '@/components/CVPreview';
-import html2pdf from 'html2pdf.js';
+import { cn } from '@/lib/utils';
+
+const A4_W_MM = 210;
+const A4_H_MM = 297;
 
 const DownloadPage = () => {
   const { t } = useTranslation();
   const { cvData, selectedTemplate, language } = useCVStore();
   const [isDownloading, setIsDownloading] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [showPreview, setShowPreview] = useState(true);
+  const previewRef = useRef<HTMLDivElement>(null);
+
+  const filename = `${(cvData.personalInfo.firstName || 'CV').trim()}_${(cvData.personalInfo.lastName || '').trim()}_CV.pdf`
+    .replace(/\s+/g, '_')
+    .replace(/^_+|_+$/g, '');
 
   const handleDownloadPDF = async () => {
+    const target = document.querySelector<HTMLElement>('[data-pdf-target]');
+    if (!target) return;
     setIsDownloading(true);
-    
+
+    target.classList.add('pdf-capturing');
+
     try {
-      const element = document.getElementById('cv-preview');
-      if (!element) return;
+      // 1. Wait for all fonts (including Noto Sans Arabic) to fully load
+      if (document.fonts && (document.fonts as any).ready) {
+        await (document.fonts as any).ready;
+      }
+      // small delay so any in-flight images settle
+      await new Promise((r) => setTimeout(r, 80));
 
-      const opt = {
-        margin: 10,
-        filename: `${cvData.personalInfo.firstName}_${cvData.personalInfo.lastName}_CV.pdf`,
-        image: { type: 'jpeg' as const, quality: 0.98 },
-        html2canvas: { 
-          scale: 2,
-          useCORS: true,
-          letterRendering: true,
-          allowTaint: true
+      // 2. Lazy-load html2canvas to keep the dev server light
+      const { default: html2canvas } = await import('html2canvas');
+
+      // 3. Capture at 2× scale; explicitly clone fonts and Arabic dir into the iframe
+      const canvas = await html2canvas(target, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        windowWidth: target.scrollWidth,
+        windowHeight: target.scrollHeight,
+        logging: false,
+        onclone: (doc, node) => {
+          // Re-import the fonts inside the cloned document so html2canvas
+          // shapes Arabic glyphs correctly.
+          const link = doc.createElement('link');
+          link.rel = 'stylesheet';
+          link.href =
+            'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Arabic:wght@300;400;500;600;700;800&family=Cormorant+Garamond:wght@400;500;600;700&display=swap';
+          doc.head.appendChild(link);
+          (node as HTMLElement).style.fontFamily =
+            language === 'ar'
+              ? "'Noto Sans Arabic', 'Inter', Arial, sans-serif"
+              : "'Inter', 'Noto Sans Arabic', Arial, sans-serif";
+          (node as HTMLElement).setAttribute('dir', language === 'ar' ? 'rtl' : 'ltr');
+          (node as HTMLElement).setAttribute('lang', language);
         },
-        jsPDF: { 
-          unit: 'mm' as const, 
-          format: 'a4' as const, 
-          orientation: 'portrait' as const,
-          compress: true
-        }
-      };
+      });
 
-      await html2pdf().set(opt).from(element).save();
-    } catch (error) {
-      console.error('Error generating PDF:', error);
-      alert(language === 'ar' ? 'حدث خطأ أثناء إنشاء PDF' : 'Error generating PDF');
+      // 4. Compute multi-page slicing in mm against A4
+      const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+      const pageW = A4_W_MM;
+      const pageH = A4_H_MM;
+      const imgWmm = pageW;
+      const imgHmm = (canvas.height * imgWmm) / canvas.width;
+
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+
+      if (imgHmm <= pageH + 0.5) {
+        // single page
+        pdf.addImage(dataUrl, 'JPEG', 0, 0, imgWmm, imgHmm, undefined, 'FAST');
+      } else {
+        // multiple pages — keep the same image but offset y negatively each page
+        let heightLeft = imgHmm;
+        let position = 0;
+        pdf.addImage(dataUrl, 'JPEG', 0, position, imgWmm, imgHmm, undefined, 'FAST');
+        heightLeft -= pageH;
+        while (heightLeft > 0) {
+          position -= pageH;
+          pdf.addPage();
+          pdf.addImage(dataUrl, 'JPEG', 0, position, imgWmm, imgHmm, undefined, 'FAST');
+          heightLeft -= pageH;
+        }
+      }
+
+      pdf.save(filename || 'CV.pdf');
+    } catch (e) {
+      console.error(e);
+      alert(t('pdfError'));
     } finally {
+      target.classList.remove('pdf-capturing');
       setIsDownloading(false);
     }
   };
 
-  const handleCopyLink = () => {
-    const link = `${window.location.origin}/cv/${Date.now()}`;
-    navigator.clipboard.writeText(link).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
+  const handlePrint = async () => {
+    if (document.fonts && (document.fonts as any).ready) {
+      await (document.fonts as any).ready;
+    }
+    window.print();
   };
 
   const handleShare = async () => {
+    const url = window.location.origin;
+    const data = {
+      title: `${cvData.personalInfo.firstName} ${cvData.personalInfo.lastName} — CV`,
+      text: language === 'ar' ? 'سيرتي الذاتية مصممة بـ CVForge' : 'My CV built with CVForge',
+      url,
+    };
     if (navigator.share) {
       try {
-        await navigator.share({
-          title: `${cvData.personalInfo.firstName} ${cvData.personalInfo.lastName} - CV`,
-          text: language === 'ar' ? 'سيرتي الذاتية' : 'My CV',
-          url: `${window.location.origin}/cv/${Date.now()}`
-        });
-      } catch (error) {
-        console.log('Error sharing:', error);
+        await navigator.share(data);
+      } catch {
+        // user cancelled — no-op
       }
     } else {
-      handleCopyLink();
+      navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
     }
   };
 
+  const handleCopy = () => {
+    navigator.clipboard.writeText(window.location.origin);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1800);
+  };
+
+  const isRtl = language === 'ar';
+  const Arrow = isRtl ? ArrowLeft : ArrowRight;
+
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
       <Header />
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 no-print">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold glass mb-4">
+            <Sparkles className="w-3.5 h-3.5 text-accent" />
+            {t(selectedTemplate)}
+          </div>
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 dark:text-white">
             {t('downloadPDF')}
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300">
-            {language === 'ar' ? 'سيرتك الذاتية جاهزة للتحميل والمشاركة' : 'Your CV is ready to download and share'}
+          <p className="mt-2 text-base text-slate-600 dark:text-slate-300">
+            {language === 'ar' ? 'سيرتك جاهزة للتحميل والمشاركة بحجم A4 الدقيق' : 'Your CV is print-ready at exact A4 size'}
           </p>
-        </div>
+        </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Preview Section */}
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                {language === 'ar' ? 'معاينة' : 'Preview'}
-              </h2>
-              <button
-                onClick={() => setShowPreview(!showPreview)}
-                className="flex items-center px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors text-sm"
-              >
-                <Eye className="w-4 h-4 ml-2" />
-                {showPreview ? (language === 'ar' ? 'إخفاء' : 'Hide') : (language === 'ar' ? 'إظهار' : 'Show')}
-              </button>
-            </div>
-            
-            {showPreview && (
-              <motion.div
-                id="cv-preview"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 min-h-96 overflow-auto"
+        <div className="grid lg:grid-cols-[1fr_360px] gap-6">
+          <div className="card p-4 sm:p-6">
+            <div
+              className="bg-slate-200 dark:bg-slate-900 rounded-xl p-4 sm:p-8 overflow-auto scrollbar-thin"
+              ref={previewRef}
+            >
+              <div
+                className="mx-auto bg-white shadow-2xl rounded-md overflow-hidden print-target"
+                style={{ width: '210mm' }}
+                data-pdf-target
               >
                 <CVPreview />
-              </motion.div>
-            )}
-          </div>
-
-          {/* Download Options */}
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-              {language === 'ar' ? 'خيارات التحميل' : 'Download Options'}
-            </h2>
-            
-            <div className="space-y-6">
-              {/* PDF Download */}
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-                <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400 rounded-lg flex items-center justify-center mr-4">
-                    <DownloadIcon className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white">
-                      {language === 'ar' ? 'تحميل PDF' : 'Download PDF'}
-                    </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-300">
-                      {language === 'ar' ? 'احصل على نسخة PDF عالية الجودة من سيرتك الذاتية' : 'Get a high-quality PDF version of your CV'}
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={handleDownloadPDF}
-                  disabled={isDownloading}
-                  className="w-full bg-red-600 text-white py-3 px-4 rounded-lg hover:bg-red-700 disabled:bg-red-400 disabled:cursor-not-allowed transition-colors font-medium flex items-center justify-center"
-                >
-                  {isDownloading ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      {language === 'ar' ? 'جاري التحميل...' : 'Downloading...'}
-                    </>
-                  ) : (
-                    <>
-                      <DownloadIcon className="w-4 h-4 ml-2" />
-                      {t('downloadPDF')}
-                    </>
-                  )}
-                </button>
-              </div>
-
-              {/* Share Options */}
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-                <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 rounded-lg flex items-center justify-center mr-4">
-                    <Share2 className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white">
-                      {language === 'ar' ? 'مشاركة' : 'Share'}
-                    </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-300">
-                      {language === 'ar' ? 'شارك سيرتك الذاتية مع الآخرين' : 'Share your CV with others'}
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="space-y-3">
-                  <button
-                    onClick={handleShare}
-                    className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center"
-                  >
-                    <Share2 className="w-4 h-4 ml-2" />
-                    {language === 'ar' ? 'مشاركة' : 'Share'}
-                  </button>
-                  
-                  <button
-                    onClick={handleCopyLink}
-                    className="w-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 py-3 px-4 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors font-medium flex items-center justify-center"
-                  >
-                    {copied ? (
-                      <>
-                        <Check className="w-4 h-4 ml-2" />
-                        {language === 'ar' ? 'تم النسخ!' : 'Copied!'}
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-4 h-4 ml-2" />
-                        {t('copyLink')}
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              {/* Template Info */}
-              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
-                  {language === 'ar' ? 'النموذج المختار' : 'Selected Template'}
-                </h3>
-                <div className="flex items-center">
-                  <div className={`w-8 h-8 rounded-lg mr-3 ${
-                    selectedTemplate === 'minimal' ? 'bg-blue-50 dark:bg-blue-900' :
-                    selectedTemplate === 'creative' ? 'bg-purple-50 dark:bg-purple-900' :
-                    selectedTemplate === 'classic' ? 'bg-gray-50 dark:bg-gray-800' :
-                    'bg-green-50 dark:bg-green-900'
-                  }`}></div>
-                  <div>
-                    <p className="font-medium text-gray-900 dark:text-white">
-                      {t(selectedTemplate)}
-                    </p>
-                    <p className="text-sm text-gray-600 dark:text-gray-300">
-                      {language === 'ar' ? 'نموذج احترافي' : 'Professional template'}
-                    </p>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
+
+          <aside className="space-y-4">
+            <div className="card p-5">
+              <div className="flex items-center gap-3 mb-4">
+                <div
+                  className="w-11 h-11 rounded-xl flex items-center justify-center text-white shadow-soft"
+                  style={{ background: 'linear-gradient(135deg, rgb(var(--accent)) 0%, rgb(var(--accent-strong)) 100%)' }}
+                >
+                  <DownloadIcon className="w-5 h-5" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="font-semibold text-slate-900 dark:text-white">{t('downloadPDF')}</h3>
+                  <p className="text-xs text-slate-500 truncate" title={filename}>A4 · {filename}</p>
+                </div>
+              </div>
+              <button onClick={handleDownloadPDF} disabled={isDownloading} className="btn-primary w-full">
+                {isDownloading ? (
+                  <>
+                    <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                    {t('generatingPDF')}
+                  </>
+                ) : (
+                  <>
+                    <DownloadIcon className="w-4 h-4" />
+                    {t('downloadPDF')}
+                  </>
+                )}
+              </button>
+              <button onClick={handlePrint} className="btn-ghost w-full mt-2">
+                <Printer className="w-4 h-4" /> {t('print')}
+              </button>
+            </div>
+
+            <div className="card p-5">
+              <h3 className="font-semibold text-slate-900 dark:text-white mb-3">{t('share')}</h3>
+              <div className="grid grid-cols-2 gap-2">
+                <button onClick={handleShare} className="btn-soft text-xs">
+                  <Share2 className="w-4 h-4" /> {t('share')}
+                </button>
+                <button onClick={handleCopy} className={cn('btn-ghost text-xs', copied && 'text-emerald-600')}>
+                  {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                  {copied ? t('linkCopied') : t('copyLink')}
+                </button>
+              </div>
+            </div>
+
+            <div className="card p-5">
+              <h3 className="font-semibold text-slate-900 dark:text-white mb-2">{t('tipsTitle')}</h3>
+              <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-300">
+                {[t('tip1'), t('tip2'), t('tip3')].map((tip, i) => (
+                  <li key={i} className="flex gap-2">
+                    <Check className="w-4 h-4 mt-0.5 shrink-0 text-emerald-500" />
+                    <span>{tip}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="flex gap-2">
+              <Link to="/templates" className="btn-ghost flex-1 text-xs">
+                <ArrowLeft className={cn('w-4 h-4', isRtl && 'rotate-180')} />
+                {t('templates')}
+              </Link>
+              <Link to="/create" className="btn-soft flex-1 text-xs">
+                {t('backToEdit')} <Arrow className="w-4 h-4" />
+              </Link>
+            </div>
+          </aside>
         </div>
       </div>
     </div>
