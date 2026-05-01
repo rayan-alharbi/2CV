@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import { useCVStore } from '@/store/cvStore';
-import { Globe, Sun, Moon, Menu, X, Sparkles } from 'lucide-react';
+import { Globe, Sun, Moon, Menu, X, Sparkles, Github } from 'lucide-react';
+
+const REPO_URL = 'https://github.com/rayan-alharbi/2CV';
 import { cn } from '@/lib/utils';
 
 const Header = () => {
@@ -93,8 +95,19 @@ const Header = () => {
               title={theme === 'light' ? t('dark') : t('light')}
               aria-label="toggle theme"
             >
-              {theme === 'light' ? <Moon className="w-4.5 h-4.5 w-[18px] h-[18px]" /> : <Sun className="w-[18px] h-[18px]" />}
+              {theme === 'light' ? <Moon className="w-[18px] h-[18px]" /> : <Sun className="w-[18px] h-[18px]" />}
             </button>
+
+            <a
+              href={REPO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden sm:inline-flex p-2 rounded-full text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/10 transition"
+              title="GitHub"
+              aria-label="GitHub repository"
+            >
+              <Github className="w-[18px] h-[18px]" />
+            </a>
 
             <Link to="/create" className="hidden md:inline-flex btn-primary py-2 px-4 text-xs">
               {t('createCVNow')}
@@ -134,6 +147,15 @@ const Header = () => {
                 <Globe className="inline w-4 h-4 me-2" />
                 {language === 'ar' ? 'English' : 'العربية'}
               </button>
+              <a
+                href={REPO_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200"
+              >
+                <Github className="inline w-4 h-4 me-2" />
+                GitHub
+              </a>
             </div>
           </div>
         )}

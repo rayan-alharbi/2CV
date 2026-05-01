@@ -4,7 +4,7 @@ import { initReactI18next } from 'react-i18next';
 const resources = {
   ar: {
     translation: {
-      brand: 'CVForge',
+      brand: '2CV',
       home: 'الرئيسية',
       createCV: 'إنشاء سيرتي',
       templates: 'القوالب',
@@ -34,7 +34,7 @@ const resources = {
       stats3: 'لغة',
       stats4: 'تصدير فوري',
 
-      whyChooseUs: 'لماذا CVForge؟',
+      whyChooseUs: 'لماذا 2CV؟',
       whyChooseUsSubtitle: 'كل ما تحتاجه لتصنع انطباعًا أوّل لا يُنسى',
       startNow: 'سيرتك الجديدة على بُعد دقائق',
       startNowSubtitle: 'لا تسجيل، لا انتظار، لا قيود. فقط نتائج تستحق المشاركة.',
@@ -161,7 +161,7 @@ const resources = {
   },
   en: {
     translation: {
-      brand: 'CVForge',
+      brand: '2CV',
       home: 'Home',
       createCV: 'Build CV',
       templates: 'Templates',
@@ -191,7 +191,7 @@ const resources = {
       stats3: 'Languages',
       stats4: 'Instant export',
 
-      whyChooseUs: 'Why CVForge',
+      whyChooseUs: 'Why 2CV',
       whyChooseUsSubtitle: 'Everything you need to make a memorable first impression',
       startNow: 'Your new resume is minutes away',
       startNowSubtitle: 'No sign-up, no waiting, no limits — just results worth sharing.',

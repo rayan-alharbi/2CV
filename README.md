@@ -1,8 +1,8 @@
-# CVForge — Beautiful Resumes, Instant Export
+# 2CV — Beautiful Resumes, Instant Export
 
 منصّة عربية احترافية لصنع سيرة ذاتية أنيقة بمعاينة مباشرة وتصدير PDF بجودة الطباعة.
 
-🔗 **GitHub:** [https://github.com/rayan-alharbi/cv-Create](https://github.com/rayan-alharbi/cv-Create)
+🔗 **GitHub:** [https://github.com/rayan-alharbi/2CV](https://github.com/rayan-alharbi/2CV)
 🌐 **Live demo:** [https://cv-create.pages.dev/](https://cv-create.pages.dev/)
 
 ---
@@ -65,8 +65,8 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/rayan-alharbi/cv-Create.git
-cd cv-Create
+git clone https://github.com/rayan-alharbi/2CV.git
+cd 2CV
 
 # Install dependencies
 npm install
@@ -103,7 +103,7 @@ The project is pre-configured for **Cloudflare Pages** and **Vercel** deployment
 ## 📁 هيكل المشروع / Project Structure
 
 ```
-cv-Create/
+2CV/
 ├── src/
 │   ├── components/
 │   │   ├── CVPreview.tsx          # 6 templates renderer + A4 preview
@@ -177,7 +177,7 @@ Every template supports all eight accent colors and renders the same data live.
 ## 🤝 المساهمة / Contributing
 
 نرحب بالمساهمات! للإبلاغ عن مشكلة أو طلب ميزة:
-[https://github.com/rayan-alharbi/cv-Create/issues](https://github.com/rayan-alharbi/cv-Create/issues)
+[https://github.com/rayan-alharbi/2CV/issues](https://github.com/rayan-alharbi/2CV/issues)
 
 Contributions welcome! Open an issue or PR at the repo above.
 
@@ -192,7 +192,7 @@ MIT — هذا المشروع مرخّص تحت رخصة MIT. / This project is 
 ## 📞 التواصل / Contact
 
 - GitHub: [@rayan-alharbi](https://github.com/rayan-alharbi)
-- Repository: [https://github.com/rayan-alharbi/cv-Create](https://github.com/rayan-alharbi/cv-Create)
+- Repository: [https://github.com/rayan-alharbi/2CV](https://github.com/rayan-alharbi/2CV)
 
 ---
 

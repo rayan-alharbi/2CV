@@ -12,6 +12,7 @@ import {
   Check,
   Rocket,
   Star,
+  Github,
 } from 'lucide-react';
 import Header from '@/components/Header';
 import { useCVStore } from '@/store/cvStore';
@@ -203,6 +204,15 @@ export default function Home() {
                   >
                     {t('browseTemplates')}
                   </Link>
+                  <a
+                    href="https://github.com/rayan-alharbi/2CV"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 px-7 py-3 rounded-xl font-semibold border border-white/30 text-white hover:bg-white/10 transition"
+                  >
+                    <Github className="w-4 h-4" />
+                    GitHub
+                  </a>
                 </div>
               </div>
             </div>
@@ -214,8 +224,19 @@ export default function Home() {
             <div>
               © {new Date().getFullYear()} {t('brand')}
             </div>
-            <div className="inline-flex items-center gap-1.5">
-              {t('builtWith')} <span className="text-rose-500">♥</span> · React · Tailwind
+            <div className="flex items-center gap-4">
+              <a
+                href="https://github.com/rayan-alharbi/2CV"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 hover:text-slate-900 dark:hover:text-white transition"
+              >
+                <Github className="w-4 h-4" />
+                GitHub
+              </a>
+              <span className="inline-flex items-center gap-1.5">
+                {t('builtWith')} <span className="text-rose-500">♥</span> · React · Tailwind
+              </span>
             </div>
           </div>
         </footer>

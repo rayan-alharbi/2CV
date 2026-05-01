@@ -123,7 +123,7 @@ const DownloadPage = () => {
     const url = window.location.origin;
     const data = {
       title: `${cvData.personalInfo.firstName} ${cvData.personalInfo.lastName} — CV`,
-      text: language === 'ar' ? 'سيرتي الذاتية مصممة بـ CVForge' : 'My CV built with CVForge',
+      text: language === 'ar' ? 'سيرتي الذاتية مصممة بـ 2CV' : 'My CV built with 2CV',
       url,
     };
     if (navigator.share) {
