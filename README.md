@@ -3,7 +3,7 @@
 منصّة عربية احترافية لصنع سيرة ذاتية أنيقة بمعاينة مباشرة وتصدير PDF بجودة الطباعة.
 
 🔗 **GitHub:** [https://github.com/rayan-alharbi/2CV](https://github.com/rayan-alharbi/2CV)
-🌐 **Live demo:** [https://cv-create.pages.dev/](https://cv-create.pages.dev/)
+🌐 **Live demo:** [https://2cv.pages.dev/](https://2cv.pages.dev/)
 
 ---
 
